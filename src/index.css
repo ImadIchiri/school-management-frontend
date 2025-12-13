@@ -39,6 +39,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Pallet Colors */
+  --color-school-primary: "#0ABBB5";
+  --color-school-primaryDark: "#077A7D";
+  --color-school-accent: "#9FF5D0";
+  --color-school-surface: "#F5EEDC";
 }
 
 :root {
