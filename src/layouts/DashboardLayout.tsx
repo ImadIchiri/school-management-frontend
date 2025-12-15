@@ -3,6 +3,9 @@ import {
   Dialog,
   DialogPanel,
   Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
@@ -13,11 +16,16 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Outlet } from "react-router";
-import { NAVIGATIONS } from "@/config/navigation";
+import { NavLink, Outlet } from "react-router";
+import { filterNavigationByPermissions } from "@/utils/filterNavigation";
+import MAIN_NAVIGATION from "@/utils/navigation";
 
 // Import Navigation Based On User Role
-const navigation = NAVIGATIONS.ADMIN;
+const navigation = filterNavigationByPermissions({
+  navigation: MAIN_NAVIGATION,
+  // userPermissions: ["user_read"],
+  userPermissions: ["admin_full_access"],
+});
 
 const userNavigation = [
   { name: "Your profile", href: "#" },
@@ -75,7 +83,7 @@ export default function DashboardLayout() {
                     <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
                       <button
                         type="button"
-                        className="-m-2.5 p-2.5"
+                        className="-m-2.5 p-2.5 cursor-pointer"
                         onClick={() => setSidebarOpen(false)}
                       >
                         <span className="sr-only">Close sidebar</span>
@@ -86,8 +94,8 @@ export default function DashboardLayout() {
                       </button>
                     </div>
                   </TransitionChild>
-                  {/* Sidebar component, swap this element with another sidebar if you like */}
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
+                  {/* Sidebar component, for phone */}
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-school-primaryDark px-6 pb-4 ring-1 ring-white/10">
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
@@ -101,21 +109,23 @@ export default function DashboardLayout() {
                           <ul role="list" className="-mx-2 space-y-1">
                             {navigation.map((item) => (
                               <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
+                                <NavLink
+                                  to={item.href}
+                                  className={({ isActive }) =>
+                                    classNames(
+                                      isActive
+                                        ? "text-black bg-school-surface"
+                                        : "text-white hover:text-black hover:bg-school-surface",
+                                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                    )
+                                  }
                                 >
                                   <item.icon
                                     className="h-6 w-6 shrink-0"
                                     aria-hidden="true"
                                   />
                                   {item.name}
-                                </a>
+                                </NavLink>
                               </li>
                             ))}
                           </ul>
@@ -124,7 +134,7 @@ export default function DashboardLayout() {
                         <li className="mt-auto">
                           <a
                             href="#"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-school-surface hover:text-black"
                           >
                             <Cog6ToothIcon
                               className="h-6 w-6 shrink-0"
@@ -144,8 +154,8 @@ export default function DashboardLayout() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
+          {/* Sidebar component */}
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-school-primaryDark px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
                 className="h-8 w-auto"
@@ -159,21 +169,23 @@ export default function DashboardLayout() {
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
+                        <NavLink
+                          to={item.href}
+                          className={({ isActive }) =>
+                            classNames(
+                              isActive
+                                ? "text-black bg-school-surface"
+                                : "text-white hover:text-black hover:bg-school-surface",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                            )
+                          }
                         >
                           <item.icon
                             className="h-6 w-6 shrink-0"
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </NavLink>
                       </li>
                     ))}
                   </ul>
@@ -182,7 +194,7 @@ export default function DashboardLayout() {
                 <li className="mt-auto">
                   <a
                     href="#"
-                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-school-surface hover:text-black"
                   >
                     <Cog6ToothIcon
                       className="h-6 w-6 shrink-0"
@@ -200,7 +212,7 @@ export default function DashboardLayout() {
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button
               type="button"
-              className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+              className="-m-2.5 p-2.5 text-gray-700 lg:hidden cursor-pointer"
               onClick={() => setSidebarOpen(true)}
             >
               <span className="sr-only">Open sidebar</span>
@@ -231,7 +243,7 @@ export default function DashboardLayout() {
 
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative">
-                  <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                  <MenuButton className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full bg-gray-50"
@@ -250,7 +262,7 @@ export default function DashboardLayout() {
                         aria-hidden="true"
                       />
                     </span>
-                  </Menu.Button>
+                  </MenuButton>
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"
@@ -260,9 +272,9 @@ export default function DashboardLayout() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                    <MenuItems className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                       {userNavigation.map((item) => (
-                        <Menu.Item key={item.name}>
+                        <MenuItem key={item.name}>
                           {({ active }) => (
                             <a
                               href={item.href}
@@ -274,9 +286,9 @@ export default function DashboardLayout() {
                               {item.name}
                             </a>
                           )}
-                        </Menu.Item>
+                        </MenuItem>
                       ))}
-                    </Menu.Items>
+                    </MenuItems>
                   </Transition>
                 </Menu>
               </div>
