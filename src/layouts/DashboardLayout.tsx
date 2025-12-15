@@ -17,10 +17,15 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { NavLink, Outlet } from "react-router";
-import NAVIGATIONS from "@/utils/navigation";
+import { filterNavigationByPermissions } from "@/utils/filterNavigation";
+import MAIN_NAVIGATION from "@/utils/navigation";
 
 // Import Navigation Based On User Role
-const navigation = NAVIGATIONS.ADMIN;
+const navigation = filterNavigationByPermissions({
+  navigation: MAIN_NAVIGATION,
+  // userPermissions: ["user_read"],
+  userPermissions: ["admin_full_access"],
+});
 
 const userNavigation = [
   { name: "Your profile", href: "#" },

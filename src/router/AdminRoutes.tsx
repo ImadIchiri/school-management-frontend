@@ -3,7 +3,7 @@ import type { RouteObject } from "react-router";
 
 const adminRoutes: RouteObject[] = [
   {
-    path: "/admin",
+    path: "/",
     element: <DashboardLayout />,
     children: [
       {
