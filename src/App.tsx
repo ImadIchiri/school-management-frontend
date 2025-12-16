@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router";
 import "./App.css";
 import DashboardLayout from "./layouts/DashboardLayout";
-
+import Module from "./features/modules/pages/module";
 function App() {
   return (
     <>
@@ -16,6 +16,7 @@ function App() {
               </div>
             }
           />
+          <Route path="module" element={<Module />} />
         </Route>
       </Routes>
     </>
