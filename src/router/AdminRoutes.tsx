@@ -15,26 +15,10 @@ const adminRoutes: RouteObject[] = [
         ),
       },
       {
-        path: "login",
-        element: (
-          <div>
-            <h2>Login Form Page</h2>
-          </div>
-        ),
-      },
-      {
         path: "dashboard",
         element: (
           <div>
             <h2>Welcome To dashboard</h2>
-          </div>
-        ),
-      },
-      {
-        path: "users",
-        element: (
-          <div>
-            <h2>Welcome To users</h2>
           </div>
         ),
       },

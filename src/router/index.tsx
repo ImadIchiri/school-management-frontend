@@ -1,8 +1,11 @@
 import { createBrowserRouter } from "react-router";
 import adminRoutes from "./AdminRoutes";
+import { LoginForm } from "@/pages/auth";
+import userRoutes from "./userRoutes";
 
 const mainRouter = createBrowserRouter([
   ...adminRoutes,
+  ...userRoutes,
   {
     path: "/",
     element: (
@@ -10,6 +13,10 @@ const mainRouter = createBrowserRouter([
         <h2>This Our LandingPage ...</h2>
       </div>
     ),
+  },
+  {
+    path: "/login",
+    element: <LoginForm />,
   },
 ]);
 
