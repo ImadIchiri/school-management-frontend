@@ -1,24 +1,15 @@
-import { Route, Routes } from "react-router";
+import { useRoutes } from "react-router";
 import "./App.css";
-import DashboardLayout from "./layouts/DashboardLayout";
+import { dashboardRoutes } from "./router";
+import { ToastProvider } from "@/shared/components/Toast";
 
 function App() {
+  const routes = useRoutes(dashboardRoutes);
+
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<DashboardLayout />}>
-          <Route
-            index
-            element={
-              <div>
-                <h3>Hello Again !</h3>
-                <h3>Hello Dashboard !</h3>
-              </div>
-            }
-          />
-        </Route>
-      </Routes>
-    </>
+    <ToastProvider>
+      {routes}
+    </ToastProvider>
   );
 }
 
