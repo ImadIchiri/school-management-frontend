@@ -172,7 +172,7 @@ export default function UsersPage() {
               </button>
               <button
                 onClick={openAdd}
-                className="flex items-center gap-2 rounded bg-[#0abbb5] px-4 py-2 text-sm text-white"
+                className="flex items-center gap-2 rounded bg-school-primary px-4 py-2 text-sm text-white"
               >
                 <PlusIcon className="h-5 w-5" />
                 Add User
@@ -360,7 +360,7 @@ export default function UsersPage() {
               </select>
               <button
                 onClick={saveUser}
-                className="w-full rounded bg-[#0abbb5] py-2 text-white"
+                className="w-full rounded bg-school-primary py-2 text-white"
               >
                 Save
               </button>
