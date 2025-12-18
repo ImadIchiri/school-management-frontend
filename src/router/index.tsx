@@ -1,8 +1,10 @@
 import { createBrowserRouter } from "react-router";
 import adminRoutes from "./AdminRoutes";
+import eventRoutes from "./eventRoutes";
 
 const mainRouter = createBrowserRouter([
   ...adminRoutes,
+  ...eventRoutes,
   {
     path: "/",
     element: (

@@ -103,14 +103,6 @@ const adminRoutes: RouteObject[] = [
         ),
       },
       {
-        path: "evenements",
-        element: (
-          <div>
-            <h2>Welcome To evenements</h2>
-          </div>
-        ),
-      },
-      {
         path: "opportunites",
         element: (
           <div>
