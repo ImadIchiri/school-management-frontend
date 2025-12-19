@@ -1,21 +1,132 @@
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { Route, Routes } from "react-router";
+import type { RouteObject } from "react-router";
 
-const AdminRoutes = () => {
-  return (
-    <Routes>
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route
-          index
-          element={
-            <div>
-              <h3>Hello Dashboard !</h3>
-            </div>
-          }
-        />
-      </Route>
-    </Routes>
-  );
-};
+const adminRoutes: RouteObject[] = [
+  {
+    path: "/",
+    element: <DashboardLayout />,
+    children: [
+      {
+        index: true,
+        element: (
+          <div>
+            <h2>This should Redirect To Dashboard</h2>
+          </div>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <div>
+            <h2>Welcome To dashboard</h2>
+          </div>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <div>
+            <h2>Welcome To users</h2>
+          </div>
+        ),
+      },
+      {
+        path: "filieres",
+        element: (
+          <div>
+            <h2>Welcome To filieres</h2>
+          </div>
+        ),
+      },
+      {
+        path: "niveaux",
+        element: (
+          <div>
+            <h2>Welcome To niveaux</h2>
+          </div>
+        ),
+      },
+      {
+        path: "groupes",
+        element: (
+          <div>
+            <h2>Welcome To groupes</h2>
+          </div>
+        ),
+      },
+      {
+        path: "modules",
+        element: (
+          <div>
+            <h2>Welcome To modules</h2>
+          </div>
+        ),
+      },
+      {
+        path: "cours",
+        element: (
+          <div>
+            <h2>Welcome To cours</h2>
+          </div>
+        ),
+      },
+      {
+        path: "examens",
+        element: (
+          <div>
+            <h2>Welcome To examens</h2>
+          </div>
+        ),
+      },
+      {
+        path: "notes",
+        element: (
+          <div>
+            <h2>Welcome To notes</h2>
+          </div>
+        ),
+      },
+      {
+        path: "absences",
+        element: (
+          <div>
+            <h2>Welcome To absences</h2>
+          </div>
+        ),
+      },
+      {
+        path: "planning",
+        element: (
+          <div>
+            <h2>Welcome To planning</h2>
+          </div>
+        ),
+      },
+      {
+        path: "evenements",
+        element: (
+          <div>
+            <h2>Welcome To evenements</h2>
+          </div>
+        ),
+      },
+      {
+        path: "opportunites",
+        element: (
+          <div>
+            <h2>Welcome To opportunites</h2>
+          </div>
+        ),
+      },{
+        path: "ressources",
+        element: (
+          <div>
+            <h2>Welcome To ressource</h2>
+          </div>
+        ),
+      },
+    ],
+  },
+];
 
-export default AdminRoutes;
+export default adminRoutes;
