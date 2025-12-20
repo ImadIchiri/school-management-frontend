@@ -101,6 +101,13 @@ const adminRoutes: RouteObject[] = [
             <h2>Welcome To opportunites</h2>
           </div>
         ),
+      },{
+        path: "ressources",
+        element: (
+          <div>
+            <h2>Welcome To ressource</h2>
+          </div>
+        ),
       },
     ],
   },

@@ -11,6 +11,7 @@ import {
   CalendarDaysIcon,
   MegaphoneIcon,
   BriefcaseIcon,
+  FolderIcon,
 } from "@heroicons/react/24/outline";
 
 export type MainNavigationItemsTypes = {
@@ -110,6 +111,12 @@ const MAIN_NAVIGATION: MainNavigationItemsTypes[] = [
     href: "/opportunites",
     icon: BriefcaseIcon,
     permissions: ["opportunite_read"],
+  },
+  {
+    name: "Ressources",
+    href: "/ressources",
+    icon: FolderIcon,
+    permissions: ["ressources_read"],
   },
 ];
 
