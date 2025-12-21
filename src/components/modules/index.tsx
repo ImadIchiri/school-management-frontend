@@ -9,7 +9,6 @@ export default function ModuleStyle() {
 
   return (
     <div className="p-6 bg-[#DFF6F5] min-h-screen font-sans">
-
       {/* ===== HEADER ===== */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold text-[#1D6F6B]">Modules</h1>
@@ -107,7 +106,6 @@ export default function ModuleStyle() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-3xl p-6 border border-[#7ED4D1] shadow-2xl mx-4">
-
             {/* Header Modal */}
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-[#1D6F6B]">
@@ -122,13 +120,16 @@ export default function ModuleStyle() {
             </div>
             {/* ===== Form ===== */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
-
               {/* Nom du module */}
               <div className="space-y-1">
                 <label className="block text-sm font-semibold text-[#1D6F6B]">
                   Nom du module
                 </label>
-                <input type="text" placeholder="Entrer le nom du module" className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 focus:ring-2 focus:ring-[#30B2AC] outline-none"/>
+                <input
+                  type="text"
+                  placeholder="Entrer le nom du module"
+                  className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 focus:ring-2 focus:ring-[#30B2AC] outline-none"
+                />
               </div>
               {/* Niveau (SELECT) */}
               <div className="space-y-2">
@@ -163,16 +164,17 @@ export default function ModuleStyle() {
             <div className="flex justify-end gap-4 mt-8">
               <button
                 onClick={() => setShowModal(false)}
-                className="border-2 border-[#7ED4D1] px-6 py-2 rounded-lg text-[#1D6F6B] hover:bg-[#DFF6F5] transition">
+                className="border-2 border-[#7ED4D1] px-6 py-2 rounded-lg text-[#1D6F6B] hover:bg-[#DFF6F5] transition"
+              >
                 Annuler
               </button>
               <button className="bg-[#30B2AC] text-white px-6 py-2 rounded-lg hover:bg-[#1D6F6B] transition">
                 Ajouter
               </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 }
