@@ -6,6 +6,7 @@ import moduleRoutes from "./ModuleRouter";
 import coursRoutes from "./CoursRoutes";
 import ressourceRoutes from "./RessourceRoutes";
 import eventRoutes from "./eventRoutes";
+import rbacRoutes from "./rbac";
 
 const mainRouter = createBrowserRouter([
   ...adminRoutes,
@@ -14,6 +15,7 @@ const mainRouter = createBrowserRouter([
   ...coursRoutes,
   ...ressourceRoutes,
   ...eventRoutes,
+  ...rbacRoutes,
   {
     path: "/",
     element: (
