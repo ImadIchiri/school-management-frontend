@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Plus, Grid3x3 } from 'lucide-react';
+import { Plus, Grid3x3, LayoutList } from 'lucide-react';
 import { useExamens, useDeleteExamen, useCreateExamen } from '@/features/examens/hooks';
 import { ExamTable } from '@/features/examens/components/ExamTable';
+import { ExamCards } from '@/features/examens/components/ExamCards';
 import { ExamForm } from '@/features/examens/components/ExamForm';
 import type { ExamenFilters } from '@/features/examens/types';
 import { useToast } from '@/shared/components/Toast';
@@ -17,6 +18,7 @@ export const ExamListPage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [view, setView] = useState<'grid' | 'table'>('grid');
 
   useEffect(() => {
     fetchExamens();
@@ -63,8 +65,19 @@ export const ExamListPage: React.FC = () => {
           <h1 className="text-4xl font-bold text-teal-700 mb-2">Examens</h1>
           <div className="flex justify-between items-center mt-6">
             <div className="flex gap-2">
-              <button className="p-2 bg-white border-2 border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition">
+              <button
+                className={`p-2 bg-white border-2 rounded-lg transition ${view === 'grid' ? 'border-teal-600 text-teal-600 hover:bg-teal-50' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+                title="Vue grille"
+                onClick={() => setView('grid')}
+              >
                 <Grid3x3 size={20} />
+              </button>
+              <button
+                className={`p-2 bg-white border-2 rounded-lg transition ${view === 'table' ? 'border-teal-600 text-teal-600 hover:bg-teal-50' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+                title="Vue tableau"
+                onClick={() => setView('table')}
+              >
+                <LayoutList size={20} />
               </button>
             </div>
             <button
@@ -77,15 +90,25 @@ export const ExamListPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Table */}
-        <ExamTable
-          examens={examens}
-          loading={loading}
-          onEdit={(examen) => navigate(`/exams/${examen.id}/edit`)}
-          onDelete={handleDelete}
-          onViewNotes={(id) => navigate(`/exams/${id}/notes`)}
-          onFiltersChange={handleFiltersChange}
-        />
+        {view === 'grid' ? (
+          <ExamCards
+            examens={examens}
+            loading={loading}
+            onEdit={(examen) => navigate(`/examens/${examen.id}/edit`)}
+            onView={(id) => navigate(`/examens/${id}`)}
+            onDelete={handleDelete}
+            onFiltersChange={handleFiltersChange}
+          />
+        ) : (
+          <ExamTable
+            examens={examens}
+            loading={loading}
+            onEdit={(examen) => navigate(`/examens/${examen.id}/edit`)}
+            onDelete={handleDelete}
+            onViewNotes={(id) => navigate(`/examens/${id}/notes`)}
+            onFiltersChange={handleFiltersChange}
+          />
+        )}
 
         {/* Create Modal */}
         <Modal

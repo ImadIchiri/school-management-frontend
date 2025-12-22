@@ -1,60 +1,21 @@
-import type { RouteObject } from 'react-router';
-import DashboardLayout from '@/layouts/DashboardLayout';
+import { createBrowserRouter } from "react-router";
+import adminRoutes from "./AdminRoutes";
+import AbsenceRouter from "./AbsenceRouter";
+import PlanningRouter from "./PlanningRouter";
 
-// Examens
-import {
-  ExamListPage,
-  ExamCreatePage,
-  ExamEditPage,
-} from '@/features/examens';
 
-// Notes
-import { NotesPage } from '@/features/notes';
-
-// Absences
-import { AbsencePage } from '@/features/absences';
-
-export const dashboardRoutes: RouteObject[] = [
+const mainRouter = createBrowserRouter([
+  ...adminRoutes,
+  ...AbsenceRouter,
+  ...PlanningRouter,
   {
-    path: '/',
-    element: <DashboardLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <div>
-            <h3>Hello Again !</h3>
-            <h3>Hello Dashboard !</h3>
-          </div>
-        ),
-      },
-      // Examens
-      {
-        path: 'exams',
-        children: [
-          {
-            index: true,
-            element: <ExamListPage />,
-          },
-          {
-            path: 'create',
-            element: <ExamCreatePage />,
-          },
-          {
-            path: ':id/edit',
-            element: <ExamEditPage />,
-          },
-          {
-            path: ':examenId/notes',
-            element: <NotesPage />,
-          },
-        ],
-      },
-      // Absences
-      {
-        path: 'absences',
-        element: <AbsencePage />,
-      },
-    ],
+    path: "/",
+    element: (
+      <div>
+        <h2>This Our LandingPage ...</h2>
+      </div>
+    ),
   },
-];
+]);
+
+export default mainRouter;

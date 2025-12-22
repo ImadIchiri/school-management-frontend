@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Grid3x3 } from 'lucide-react';
+import { Plus, Grid3x3, LayoutList } from 'lucide-react';
 import {
   useAbsences,
   useCreateAbsence,
@@ -8,6 +8,7 @@ import {
 } from '@/features/absences/hooks';
 import { AbsenceList } from '@/features/absences/components/AbsenceList';
 import { AbsenceForm } from '@/features/absences/components/AbsenceForm';
+import { AbsenceCards } from '@/components/absence/AbsenceCards';
 import type { AbsenceFilters, Absence } from '@/features/absences/types';
 import { useToast } from '@/shared/components/Toast';
 import { Modal } from '@/shared/components/Modal';
@@ -26,6 +27,7 @@ export const AbsencePage: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showJustifyModal, setShowJustifyModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [view, setView] = useState<'grid' | 'table'>('grid');
 
   const [selectedAbsence, setSelectedAbsence] = useState<Absence | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -108,8 +110,19 @@ export const AbsencePage: React.FC = () => {
           <h1 className="text-4xl font-bold text-teal-700 mb-2">Absences</h1>
           <div className="flex justify-between items-center mt-6">
             <div className="flex gap-2">
-              <button className="p-2 bg-white border-2 border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition">
+              <button
+                className={`p-2 bg-white border-2 rounded-lg transition ${view === 'grid' ? 'border-teal-600 text-teal-600 hover:bg-teal-50' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+                title="Vue grille"
+                onClick={() => setView('grid')}
+              >
                 <Grid3x3 size={20} />
+              </button>
+              <button
+                className={`p-2 bg-white border-2 rounded-lg transition ${view === 'table' ? 'border-teal-600 text-teal-600 hover:bg-teal-50' : 'border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+                title="Vue tableau"
+                onClick={() => setView('table')}
+              >
+                <LayoutList size={20} />
               </button>
             </div>
             <button
@@ -117,26 +130,40 @@ export const AbsencePage: React.FC = () => {
               className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
             >
               <Plus size={20} />
-              Create
+              Ajouter
             </button>
           </div>
         </div>
 
-        {/* List */}
-        <AbsenceList
-          absences={absences}
-          loading={loading}
-          onEdit={(absence) => {
-            setSelectedAbsence(absence);
-            setShowEditModal(true);
-          }}
-          onDelete={handleDelete}
-          onJustify={(absence) => {
-            setSelectedAbsence(absence);
-            setShowJustifyModal(true);
-          }}
-          onFiltersChange={handleFiltersChange}
-        />
+        {/* Grid or Table View */}
+        {view === 'grid' ? (
+          <AbsenceCards
+            absences={absences}
+            loading={loading}
+            onEdit={(absence) => {
+              setSelectedAbsence(absence);
+              setShowEditModal(true);
+            }}
+            onView={() => {}}
+            onDelete={handleDelete}
+            onFiltersChange={handleFiltersChange}
+          />
+        ) : (
+          <AbsenceList
+            absences={absences}
+            loading={loading}
+            onEdit={(absence) => {
+              setSelectedAbsence(absence);
+              setShowEditModal(true);
+            }}
+            onDelete={handleDelete}
+            onJustify={(absence) => {
+              setSelectedAbsence(absence);
+              setShowJustifyModal(true);
+            }}
+            onFiltersChange={handleFiltersChange}
+          />
+        )}
 
         {/* Create Modal */}
         <Modal
@@ -145,7 +172,7 @@ export const AbsencePage: React.FC = () => {
           size="xl"
         >
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-teal-700">Créer une absence</h2>
+            <h2 className="text-2xl font-semibold text-teal-700">Ajouter une absence</h2>
             <AbsenceForm
               onSubmit={handleCreateSubmit}
               loading={loadingCreate}

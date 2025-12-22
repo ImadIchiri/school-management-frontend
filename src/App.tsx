@@ -1,16 +1,7 @@
-import { useRoutes } from "react-router";
+import { RouterProvider } from "react-router";
+import mainRouter from "./router";
 import "./App.css";
-import { dashboardRoutes } from "./router";
-import { ToastProvider } from "@/shared/components/Toast";
 
-function App() {
-  const routes = useRoutes(dashboardRoutes);
-
-  return (
-    <ToastProvider>
-      {routes}
-    </ToastProvider>
-  );
-}
+const App = () => <RouterProvider router={mainRouter} />;
 
 export default App;
