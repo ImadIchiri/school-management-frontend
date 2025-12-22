@@ -12,6 +12,8 @@ import {
   MegaphoneIcon,
   BriefcaseIcon,
   FolderIcon,
+  UserGroupIcon,
+  KeyIcon,
 } from "@heroicons/react/24/outline";
 
 export type MainNavigationItemsTypes = {
@@ -35,6 +37,20 @@ const MAIN_NAVIGATION: MainNavigationItemsTypes[] = [
     href: "/users",
     icon: UsersIcon,
     permissions: ["user_read"],
+  },
+
+  // ================= RBAC =================
+  {
+    name: "Rôles",
+    href: "/rbac/roles",
+    icon: UserGroupIcon,
+    permissions: ["role_read"],
+  },
+  {
+    name: "Permissions",
+    href: "/rbac/permissions",
+    icon: KeyIcon,
+    permissions: ["permission_read"],
   },
 
   // ================= Filières + Niveaux + Groupes =================

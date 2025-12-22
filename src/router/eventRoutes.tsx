@@ -11,6 +11,10 @@ const eventRoutes: RouteObject[] = [
         index: true,
         element: <AllEventsPage />,
       },
+      {
+        path: ":id",
+        element: <AllEventsPage />,
+      },
     ],
   },
 ];

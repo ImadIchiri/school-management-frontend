@@ -23,14 +23,6 @@ const adminRoutes: RouteObject[] = [
         ),
       },
       {
-        path: "users",
-        element: (
-          <div>
-            <h2>Welcome To users</h2>
-          </div>
-        ),
-      },
-      {
         path: "filieres",
         element: (
           <div>

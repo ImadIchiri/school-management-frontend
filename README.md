@@ -2,7 +2,7 @@
 
 ## docker build -t school-management-app . (crée une image basée sur notre Dockerfile DEV)
 
-## docker run -p 5173:5173 school-management-app
+##  
 
 ## docker run -p 5173:5173 -v .:/app school-management-app (Run with live code updates)
 

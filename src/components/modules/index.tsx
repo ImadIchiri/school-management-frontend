@@ -44,7 +44,6 @@ export default function ModuleStyle() {
 
   return (
     <div className="p-6 bg-[#DFF6F5] min-h-screen font-sans">
-
       {/* ===== HEADER ===== */}
 
       <div className="flex justify-between items-center mb-6">
@@ -153,14 +152,22 @@ export default function ModuleStyle() {
               <div>
                 <label className="text-sm font-semibold text-[#1D6F6B]">Niveau</label>
                 <select
-                  value={newModule.niveauId}
-                  onChange={(e) => setNewModule({ ...newModule, niveauId: Number(e.target.value) })}
-                  className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4"
-                >
-                  <option value={0}>Choisir le niveau</option>
-                  <option value={1}>Niveau 1</option>
-                  <option value={2}>Niveau 2</option>
-                </select>
+                value={newModule.niveauId}
+                onChange={(e) =>
+                  setNewModule({
+                    ...newModule,
+                    niveauId: Number(e.target.value),
+                  })
+                }
+                className="border p-3 rounded"
+              >
+                <option value={0}>Choisir un niveau</option>
+                {modules.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nom}
+                  </option>
+                ))}
+              </select>
               </div>
 
               {/* Description */}

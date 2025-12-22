@@ -148,7 +148,15 @@ const VIEW_TYPES = {
 
 const EventsPage = () => {
   const [viewType, setViewType] = useState(VIEW_TYPES.TABLE);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleOpenCreateEventModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseCreateEventModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <section className="flex-1">
       {/* Header */}
@@ -177,7 +185,10 @@ const EventsPage = () => {
               <FaList className="text-xl" />
             </button>
           </div>
-          <button className="flex items-center gap-2 px-3 py-1 rounded-full scale-90 cursor-pointer border-2 border-school-primaryDark bg-school-primaryDark text-school-surface hover:bg-school-surface hover:text-school-primaryDark">
+          <button
+            onClick={handleOpenCreateEventModal}
+            className="flex items-center gap-2 px-3 py-1 rounded-full scale-90 cursor-pointer border-2 border-school-primaryDark bg-school-primaryDark text-school-surface hover:bg-school-surface hover:text-school-primaryDark"
+          >
             <FaCirclePlus />
             <span className="text-lg">Evenement</span>
           </button>
@@ -239,6 +250,91 @@ const EventsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Test Code */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-lg w-full max-w-3xl p-6 border border-school-primary shadow-2xl mx-4">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-school-primaryDark">
+                Créer un événement
+              </h3>
+              <button
+                onClick={handleCloseCreateEventModal}
+                className="cursor-pointer text-school-primary text-2xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* ===== Form ===== */}
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Titre */}
+              <div className="space-y-1 md:col-span-2">
+                <label className="block text-sm font-semibold text-school-primaryDark">
+                  Titre de l’événement
+                </label>
+                <input
+                  type="text"
+                  name="titre"
+                  placeholder="Ex : Journée portes ouvertes"
+                  required
+                  className="w-full h-11 border border-school-primary rounded-lg px-4
+                     focus:ring-2 focus:ring-school-primary outline-none"
+                />
+              </div>
+
+              {/* Date */}
+              <div className="space-y-1">
+                <label className="block text-sm font-semibold text-school-primaryDark">
+                  Date et heure
+                </label>
+                <input
+                  type="datetime-local"
+                  name="date"
+                  required
+                  className="w-full h-11 border border-school-primary rounded-lg px-4
+                     focus:ring-2 focus:ring-school-primary outline-none"
+                />
+              </div>
+
+              {/* Info employé (read-only / optional UI) */}
+              <div className="space-y-1">
+                <label className="block text-sm font-semibold text-school-primaryDark">
+                  Organisateur
+                </label>
+                <input
+                  type="text"
+                  value={"Test user"}
+                  disabled
+                  className="w-full h-11 border border-school-primary rounded-lg px-4
+                     bg-gray-100 text-gray-600 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="md:col-span-2 flex justify-end gap-4 mt-8">
+                <button
+                  type="button"
+                  onClick={handleCloseCreateEventModal}
+                  className="cursor-pointer border-2 border-school-primary px-6 py-2 rounded-lg
+                     text-school-primaryDark hover:bg-[#DFF6F5] transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="cursor-pointer bg-school-primary text-white px-6 py-2 rounded-lg
+                     hover:bg-school-primaryDark transition"
+                >
+                  Créer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
