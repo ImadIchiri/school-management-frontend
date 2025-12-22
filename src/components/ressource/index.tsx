@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiGrid, FiList } from "react-icons/fi";
+import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export default function RessourceStyle() {
@@ -43,6 +44,13 @@ export default function RessourceStyle() {
                        hover:bg-[#279D99] hover:text-white transition-all"
           >
             {view === "grid" ? <FiList size={20} /> : <FiGrid size={20} />}
+          </button>
+          <button className="w-10 h-10 flex items-center justify-center rounded-lg 
+              bg-[#7ED4D1] text-[#1D6F6B] 
+              hover:bg-[#279D99] hover:text-white 
+              transition-all"
+          >
+            <MdDelete className="text-2xl" />
           </button>
 
           {/* Create */}

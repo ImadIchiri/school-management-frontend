@@ -1,8 +1,85 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getCoursById, updateCours } from "@/services/cours";
+
+type UpdateCoursDto = {
+  titre: string;
+  description?: string;
+  dateDebut: string;
+  dateFin: string;
+  moduleId: number;
+  enseignantId?: number;
+  salleId?: number;
+};
 
 function CoursUpdate() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const [form, setForm] = useState<UpdateCoursDto>({
+    titre: "",
+    description: "",
+    dateDebut: "",
+    dateFin: "",
+    moduleId: 0,
+    enseignantId: 0,
+    salleId: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  // ===== Charger le cours =====
+  useEffect(() => {
+    const fetchCours = async () => {
+      try {
+        if (!id) return;
+        const response = await getCoursById(Number(id));
+        const c = response.data;
+
+        setForm({
+          titre: c.titre,
+          description: c.description || "",
+          dateDebut: c.dateDebut.slice(0, 10),
+          dateFin: c.dateFin.slice(0, 10),
+          moduleId: c.moduleId,
+          enseignantId: c.enseignantId || 0,
+          salleId: c.salleId || 0,
+        });
+      } catch (error) {
+        console.error("Erreur chargement cours :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCours();
+  }, [id]);
+
+  // ===== Submit =====
+  const handleUpdate = async () => {
+    try {
+      if (!id) return;
+
+      if (!form.titre || !form.moduleId) {
+        alert("Titre et module obligatoires");
+        return;
+      }
+
+      await updateCours(Number(id), form);
+      navigate("/Cours");
+    } catch (error) {
+      console.error("Erreur mise à jour :", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 bg-[#DFF6F5] min-h-screen flex items-center justify-center">
+        Chargement...
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 bg-[#DFF6F5] min-h-screen">
       {/* HEADER */}
@@ -10,111 +87,93 @@ function CoursUpdate() {
         <h3 className="text-xl font-semibold text-[#1D6F6B]">
           Modifier le Cours #{id}
         </h3>
-        <button onClick={() => navigate("/Cours")} className="text-black-500 text-xl font-bold">
+        <button onClick={() => navigate(-1)} className="text-xl font-bold">
           ✕
         </button>
       </div>
-      <div className="max-h-[70vh] overflow-y-auto pr-1">
-    {/* ===== Form ===== */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      {/* Titre du cours */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Titre du cours
-        </label>
+      {/* FORM */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        {/* Titre */}
+        <div>
+          <label className="text-sm font-semibold text-[#1D6F6B]">Titre</label>
+          <input
+            type="text"
+            value={form.titre}
+            onChange={(e) => setForm({ ...form, titre: e.target.value })}
+            className="w-full h-11 border bg-white rounded-lg px-4"
+          />
+        </div>
+
+        {/* Module */}
+        <div>
+          <label className="text-sm font-semibold text-[#1D6F6B]">Module</label>
+          <select
+            value={form.moduleId}
+            onChange={(e) =>
+              setForm({ ...form, moduleId: Number(e.target.value) })
+            }
+            className="w-full h-11 border bg-white rounded-lg px-4"
+          >
+            <option value={0}>Choisir</option>
+            <option value={1}>Module 1</option>
+            <option value={2}>Module 2</option>
+          </select>
+        </div>
+
+        {/* Description */}
+        <div className="md:col-span-2">
+          <label className="text-sm font-semibold text-[#1D6F6B]">
+            Description
+          </label>
+          <textarea
+            rows={4}
+            value={form.description}
+            onChange={(e) =>
+              setForm({ ...form, description: e.target.value })
+            }
+            className="w-full border bg-white rounded-lg px-4 py-2"
+          />
+        </div>
+
+        {/* Dates */}
         <input
-          type="text"
-          placeholder="Entrer le titre du cours"
-          className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4
-                    focus:ring-2 focus:ring-[#30B2AC] bg-white outline-none"
+          type="date"
+          value={form.dateDebut}
+          onChange={(e) =>
+            setForm({ ...form, dateDebut: e.target.value })
+          }
+          className="border rounded-lg bg-white px-4 h-11"
+        />
+
+        <input
+          type="date"
+          value={form.dateFin}
+          onChange={(e) =>
+            setForm({ ...form, dateFin: e.target.value })
+          }
+          className="border rounded-lg bg-white px-4 h-11"
         />
       </div>
 
-      {/* Module */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Module
-        </label>
-        <select className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 bg-white
-                          focus:ring-2 focus:ring-[#30B2AC] outline-none">
-          <option value="">Choisir le module</option>
-          <option value="1">Module 1</option>
-          <option value="2">Module 2</option>
-          <option value="3">Module 3</option>
-        </select>
-      </div>
-
-      {/* Description */}
-      <div className="md:col-span-2 space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Description
-        </label>
-        <textarea
-          rows={4}
-          placeholder="Entrer la description du cours"
-          className="w-full border border-[#7ED4D1] rounded-lg px-4 py-2
-                    focus:ring-2 focus:ring-[#30B2AC] bg-white outline-none resize-none"
-        />
-      </div>
-      {/* Date début */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Date début
-        </label>
-        <input type="date" className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4
-                                    focus:ring-2 focus:ring-[#30B2AC] bg-white outline-none"/>
-      </div>
-      {/* Date fin */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Date fin
-        </label>
-        <input type="date" className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4
-                                    focus:ring-2 focus:ring-[#30B2AC] bg-white outline-none"/>
-      </div>
-      {/* Enseignant */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Enseignant
-        </label>
-        <select className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 bg-white
-                          focus:ring-2 focus:ring-[#30B2AC] outline-none">
-          <option value="">Choisir l'enseignant</option>
-          <option value="1">Enseignant 1</option>
-          <option value="2">Enseignant 2</option>
-          <option value="3">Enseignant 3</option>
-        </select>
-      </div>
-      {/* Salle */}
-      <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1D6F6B]">
-          Salle
-        </label>
-        <select className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 bg-white
-                          focus:ring-2 focus:ring-[#30B2AC] outline-none">
-          <option value="">Choisir la salle</option>
-          <option value="1">Salle 1</option>
-          <option value="2">Salle 2</option>
-          <option value="3">Salle 3</option>
-        </select>
-      </div>
-  </div>
-</div>
       {/* BUTTONS */}
-    <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+      <div className="flex justify-end gap-3 mt-6">
         <button
           onClick={() => navigate(-1)}
-          className="border px-6 py-2 rounded text-[#1D6F6B]"
+          className="border px-6 py-2 rounded"
         >
           Annuler
         </button>
-        <button className="bg-[#30B2AC] text-white px-6 py-2 rounded">
+        <button
+          onClick={handleUpdate}
+          className="bg-[#30B2AC] text-white px-6 py-2 rounded"
+        >
           Mettre à jour
         </button>
       </div>
-
     </div>
   );
 }
+
 export default CoursUpdate;

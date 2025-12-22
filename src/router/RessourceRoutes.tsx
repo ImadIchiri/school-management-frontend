@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import RessourceStyle from "@/components/ressource";
 import RessourceUpdate from "@/pages/ressource/updateRessource/UpdateRessource";
+import RessourceDetails from "@/pages/ressource/displayRessource/DisplayRessource";
 const ressourceRoutes: RouteObject[]=[
     {
         path:"ressources",
@@ -17,10 +18,10 @@ const ressourceRoutes: RouteObject[]=[
                 path: "update/:id",
                 element: <RessourceUpdate />
             },
-            // {
-            //     path: "display/:id",
-            //     element: <ModuleDetails />
-            // },
+            {
+                path: "display/:id",
+                element: <RessourceDetails />
+            },
         ],
     },
 ];
