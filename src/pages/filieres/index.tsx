@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFilieres, type Filiere } from "@/components/filieres";
+// import { useFilieres, type Filiere } from "@/components/filieres";
 import Modal from "@/components/filieres/Modal";
 
 import { FaEdit, FaEye, FaTrash, FaPlus } from "react-icons/fa";

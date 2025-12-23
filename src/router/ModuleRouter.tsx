@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import Module from "../components/modules/index";
+import Module from "@/pages/modules";
 import ModuleUpdate from "@/pages/modules/moduleUpdate/UpdateModule";
 import ModuleDetails from "@/pages/modules/moduleDisplay/DisplayModule";
 const moduleRoutes: RouteObject[]=[

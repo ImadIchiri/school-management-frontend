@@ -7,9 +7,9 @@ import coursRoutes from "./CoursRoutes";
 import ressourceRoutes from "./RessourceRoutes";
 import eventRoutes from "./eventRoutes";
 import rbacRoutes from "./rbac";
-import filieresRoutes from "./filiereRoutes";
-import niveauxRoutes from "./niveauxRoutes";
-import groupesRoutes from "./groupeRoutes";
+// import filieresRoutes from "./filiereRoutes";
+// import niveauxRoutes from "./niveauxRoutes";
+// import groupesRoutes from "./groupeRoutes";
 
 const mainRouter = createBrowserRouter([
   ...adminRoutes,
@@ -19,9 +19,9 @@ const mainRouter = createBrowserRouter([
   ...ressourceRoutes,
   ...eventRoutes,
   ...rbacRoutes,
-   ...filieresRoutes,
-  ...niveauxRoutes,
-  ...groupesRoutes,
+  //  ...filieresRoutes,
+  // ...niveauxRoutes,
+  // ...groupesRoutes,
   {
     path: "/",
     element: (

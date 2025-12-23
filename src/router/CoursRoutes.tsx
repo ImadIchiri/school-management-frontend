@@ -1,10 +1,10 @@
 import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import Cours from "@/components/cours";
+import Cours from "@/pages/cours";
 import CoursUpdate from "@/pages/cours/coursUpdate/UpdateCours";
 import CoursDetails from "@/pages/cours/coursDisplay/DisplayCours";
 
-const coursRoutes: RouteObject[]=[
+const coursRoutes: RouteObject[] = [
     {
         path:"Cours",
         element:<DashboardLayout/>,
@@ -12,16 +12,16 @@ const coursRoutes: RouteObject[]=[
             {
                 index:true,
                 element:(
-                    <Cours/>
+                    <Cours />
                 ),
             },
             {
                 path:"update/:id",
-                element:<CoursUpdate/>
+                element:<CoursUpdate />
             },
             {
                 path:"display/:id",
-                element:<CoursDetails/>
+                element:<CoursDetails />
             },
         ],
     },

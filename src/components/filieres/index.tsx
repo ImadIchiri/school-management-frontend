@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {FiliereAPI } from "../../services/axios";
+// import {FiliereAPI } from "../../services/axios";
 
 /* ================= TYPES ================= */
 export interface Filiere {

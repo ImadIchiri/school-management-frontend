@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import RessourceStyle from "@/components/ressource";
+import Ressource from "@/pages/ressource";
 import RessourceUpdate from "@/pages/ressource/updateRessource/UpdateRessource";
 import RessourceDetails from "@/pages/ressource/displayRessource/DisplayRessource";
 const ressourceRoutes: RouteObject[]=[
@@ -11,7 +11,7 @@ const ressourceRoutes: RouteObject[]=[
             {
                 index:true,
                 element:(
-                    <RessourceStyle/>
+                    <Ressource/>
                 ),
             },
             {
