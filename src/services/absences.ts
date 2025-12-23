@@ -1,6 +1,6 @@
 import axiosInstance from "@/api";
 
-type AbsenceAttributesTypes = {
+export type AbsenceAttributesTypes = {
   id?: number;
   date: Date;
   motif?: string | null;

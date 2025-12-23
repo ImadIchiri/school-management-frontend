@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAbsences } from '@/api/absence.api';
+import { getAbsences } from '@/services/absences';
 
 /**
  * 📋 ABSENCE LIST COMPONENT
@@ -27,7 +27,7 @@ export function AbsenceList() {
     setError(null);
     try {
       const data = await getAbsences();
-      setAbsences(data);
+      setAbsences(data.data); // Adapter selon la structure de la réponse
     } catch (err: any) {
       setError(err.message || 'Erreur lors du chargement');
     } finally {

@@ -14,14 +14,13 @@ import {
   getAbsenceById,   // Récupère une absence spécifique
   createAbsence,    // Crée une nouvelle absence
   updateAbsence,    // Modifie une absence existante
-  deleteAbsence,    // Supprime une absence
-} from '@/api/absence.api';
+  deleteAbsence,
+  type AbsenceAttributesTypes,    // Supprime une absence
+} from '@/services/absences';
 
 // Import des types TypeScript pour la validation
 import type {
   Absence,
-  CreateAbsenceDTO,
-  UpdateAbsenceDTO,
   AbsenceFilters,
 } from '@/features/absences/types';
 
@@ -58,10 +57,10 @@ export const useAbsences = () => {
     
     try {
       // ÉTAPE 2: On appelle l'API pour récupérer les données
-      const data = await getAbsences(filters);
+      const data = await getAbsences();
       
       // ÉTAPE 3: Si tout va bien, on met à jour la liste des absences
-      setAbsences(data);
+      setAbsences(data.data);
     } catch (err: any) {
       // ÉTAPE 4: Si une erreur se produit, on l'affiche et on stocke le message
       console.error('Erreur lors du chargement des absences:', err);
@@ -103,7 +102,7 @@ export const useAbsenceById = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fonction pour récupérer une absence par son ID
-  const fetchAbsence = useCallback(async (id: string) => {
+  const fetchAbsence = useCallback(async (id: number) => {
     // ÉTAPE 1: On commence le chargement
     setLoading(true);
     setError(null);
@@ -113,7 +112,7 @@ export const useAbsenceById = () => {
       const data = await getAbsenceById(id);
       
       // ÉTAPE 3: On stocke l'absence récupérée
-      setAbsence(data);
+      setAbsence(data.data);
     } catch (err: any) {
       // ÉTAPE 4: Gestion de l'erreur
       setError(err.message || 'Erreur lors du chargement de l\'absence');
@@ -153,7 +152,7 @@ export const useCreateAbsence = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fonction pour créer une absence
-  const execute = useCallback(async (absenceData: CreateAbsenceDTO) => {
+  const execute = useCallback(async (absenceData: AbsenceAttributesTypes) => {
     // ÉTAPE 1: On commence l'opération
     setLoading(true);
     setError(null);
@@ -163,7 +162,7 @@ export const useCreateAbsence = () => {
       const result = await createAbsence(absenceData);
       
       // ÉTAPE 3: On stocke l'absence créée
-      setData(result);
+      setData(result.data);
     } catch (err: any) {
       // ÉTAPE 4: Gestion de l'erreur
       setError(err.message || 'Erreur lors de la création de l\'absence');
@@ -205,17 +204,17 @@ export const useUpdateAbsence = () => {
 
   // Fonction pour mettre à jour une absence
   // Elle prend 2 paramètres: l'ID et les nouvelles données
-  const execute = useCallback(async (id: string, updatedData: UpdateAbsenceDTO) => {
+  const execute = useCallback(async (id: number, updatedData: AbsenceAttributesTypes) => {
     // ÉTAPE 1: On commence l'opération
     setLoading(true);
     setError(null);
     
     try {
       // ÉTAPE 2: On envoie la mise à jour au serveur
-      const result = await updateAbsence(id, updatedData);
+      const result = await updateAbsence({...updatedData, id});
       
       // ÉTAPE 3: On stocke l'absence mise à jour
-      setData(result);
+      setData(result.data);
     } catch (err: any) {
       // ÉTAPE 4: Gestion de l'erreur
       setError(err.message || 'Erreur lors de la mise à jour de l\'absence');
@@ -254,7 +253,7 @@ export const useDeleteAbsence = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Fonction pour supprimer une absence
-  const execute = useCallback(async (id: string) => {
+  const execute = useCallback(async (id: number) => {
     // ÉTAPE 1: On commence l'opération
     setLoading(true);
     setError(null);
