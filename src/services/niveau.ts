@@ -2,10 +2,12 @@ import axiosInstance from "@/api";
 
 /* ================= TYPES ================= */
 export type NiveauAttributes = {
-  id?: number;
-  nom: string;
-  filiereId: number;
-};
+    id?: number;
+    anneeLabel: string;
+    dateDebut: string;
+    dateFin: string;
+    filiereId: number;
+  };
 
 /* ================= API ================= */
 export const getNiveaux = () =>
@@ -18,10 +20,9 @@ export const createNiveau = (data: NiveauAttributes) =>
   axiosInstance.post("/niveau", data);
 
 export const updateNiveau = (
-  id: number | string,
   data: NiveauAttributes
 ) =>
-  axiosInstance.put(`/niveau/${id}`, data);
+  axiosInstance.put(`/niveau/${data.id}`, data);
 
 export const deleteNiveau = (id: number | string) =>
   axiosInstance.delete(`/niveau/${id}`);

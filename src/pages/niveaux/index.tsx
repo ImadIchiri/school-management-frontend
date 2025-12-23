@@ -77,7 +77,8 @@ const NiveauxDisplay = () => {
    
 
     if (editingNiveau) {
-      handleUpdate(editingNiveau.id, current);
+      //handleUpdate(editingNiveau.id, current);
+      handleUpdate({ ...current, id: editingNiveau.id });
     } else {
       handleCreate(current);
     }

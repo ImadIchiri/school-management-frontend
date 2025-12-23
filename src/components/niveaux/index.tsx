@@ -34,27 +34,32 @@ export const useNiveaux = () => {
   };
 
   /* ========== CREATE ========== */
-  const handleCreate = async (niveau: Omit<Niveau, "id">) => {
-    await createNiveau(niveau);
+  const handleCreate = async (data: {
+    anneeLabel: string;
+    dateDebut: string;
+    dateFin: string;
+    filiereId: number;
+  }) => {
+    await createNiveau(data);
     fetchNiveaux();
   };
 
   /* ========== UPDATE ========== */
   const handleUpdate = async (
-    id: number,
-    niveau: Omit<Niveau, "id">
+    data: { id: number, anneeLabel: string; dateDebut: string; dateFin: string; filiereId: number }
   ) => {
-    await updateNiveau(id, niveau);
+    await updateNiveau(data);
     fetchNiveaux();
   };
 
   /* ========== DELETE ========== */
   const handleDelete = async (id: number) => {
-    if (!confirm("Supprimer ce niveau ?")) return;
+    if (!window.confirm("Supprimer ce niveau ?")) return;
     await deleteNiveau(id);
     fetchNiveaux();
   };
 
+  /* ========== EFFECT ========== */
   useEffect(() => {
     fetchNiveaux();
   }, []);
@@ -62,7 +67,6 @@ export const useNiveaux = () => {
   return {
     niveaux,
     loading,
-    fetchNiveaux,
     handleCreate,
     handleUpdate,
     handleDelete,
