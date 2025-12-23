@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
-import { NiveauAPI } from "../../services/axios";
+import {
+  getNiveaux,
+  createNiveau,
+  updateNiveau,
+  deleteNiveau,
+} from "@/services/niveau";
 
+/* ================= TYPES ================= */
 export interface Niveau {
   id: number;
   anneeLabel: string;
@@ -9,14 +15,16 @@ export interface Niveau {
   filiereId: number;
 }
 
+/* ================= HOOK ================= */
 export const useNiveaux = () => {
   const [niveaux, setNiveaux] = useState<Niveau[]>([]);
   const [loading, setLoading] = useState(false);
 
+  /* ========== FETCH ========== */
   const fetchNiveaux = async () => {
     setLoading(true);
     try {
-      const res = await NiveauAPI.getAll();
+      const res = await getNiveaux();
       setNiveaux(res.data);
     } catch (error) {
       console.error("Erreur chargement niveaux", error);
@@ -25,40 +33,26 @@ export const useNiveaux = () => {
     }
   };
 
-  const deleteNiveau = async (id: number) => {
-    if (!window.confirm("Supprimer ce niveau ?")) return;
-    try {
-      await NiveauAPI.delete(id);
-      fetchNiveaux();
-    } catch (error) {
-      console.error("Erreur suppression", error);
-    }
+  /* ========== CREATE ========== */
+  const handleCreate = async (niveau: Omit<Niveau, "id">) => {
+    await createNiveau(niveau);
+    fetchNiveaux();
   };
 
-  const createNiveau = async (niveau: {
-    anneeLabel: string;
-    dateDebut: string;
-    dateFin: string;
-    filiereId: number;
-  }) => {
-    try {
-      await NiveauAPI.create(niveau);
-      fetchNiveaux();
-    } catch (error) {
-      console.error("Erreur création", error);
-    }
-  };
-
-  const updateNiveau = async (
+  /* ========== UPDATE ========== */
+  const handleUpdate = async (
     id: number,
-    niveau: { anneeLabel: string; dateDebut: string; dateFin: string; filiereId: number }
+    niveau: Omit<Niveau, "id">
   ) => {
-    try {
-      await NiveauAPI.update(id, niveau);
-      fetchNiveaux();
-    } catch (error) {
-      console.error("Erreur mise à jour", error);
-    }
+    await updateNiveau(id, niveau);
+    fetchNiveaux();
+  };
+
+  /* ========== DELETE ========== */
+  const handleDelete = async (id: number) => {
+    if (!confirm("Supprimer ce niveau ?")) return;
+    await deleteNiveau(id);
+    fetchNiveaux();
   };
 
   useEffect(() => {
@@ -68,8 +62,9 @@ export const useNiveaux = () => {
   return {
     niveaux,
     loading,
-    deleteNiveau,
-    createNiveau,
-    updateNiveau,
+    fetchNiveaux,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
   };
 };

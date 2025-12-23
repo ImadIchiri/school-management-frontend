@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { GroupeAPI } from "../../services/axios";
+import {
+  getGroupes,
+  createGroupe,
+  updateGroupe,
+  deleteGroupe,
+} from "@/services/group";
 
 /* ================= TYPES ================= */
 export interface Groupe {
@@ -8,7 +13,6 @@ export interface Groupe {
   niveauId: number;
   createdAt?: string;
   updatedAt?: string;
-  isDeleted?: boolean;
 }
 
 /* ================= HOOK ================= */
@@ -20,7 +24,7 @@ export const useGroupes = () => {
   const fetchGroupes = async () => {
     setLoading(true);
     try {
-      const res = await GroupeAPI.getAll();
+      const res = await getGroupes();
       setGroupes(res.data);
     } catch (error) {
       console.error("Erreur chargement groupes", error);
@@ -30,12 +34,12 @@ export const useGroupes = () => {
   };
 
   /* ========== CREATE ========== */
-  const createGroupe = async (groupe: {
+  const handleCreate = async (data: {
     nom: string;
     niveauId: number;
   }) => {
     try {
-      await GroupeAPI.create(groupe);
+      await createGroupe(data);
       fetchGroupes();
     } catch (error) {
       console.error("Erreur création groupe", error);
@@ -43,32 +47,33 @@ export const useGroupes = () => {
   };
 
   /* ========== UPDATE ========== */
-  const updateGroupe = async (
+  const handleUpdate = async (
     id: number,
-    groupe: {
+    data: {
       nom: string;
       niveauId: number;
     }
   ) => {
     try {
-      await GroupeAPI.update(id, groupe);
+      await updateGroupe(id, data);
       fetchGroupes();
     } catch (error) {
       console.error("Erreur mise à jour groupe", error);
     }
   };
 
-  /* ========== DELETE (SOFT DELETE) ========== */
-  const deleteGroupe = async (id: number) => {
+  /* ========== DELETE ========== */
+  const handleDelete = async (id: number) => {
+    console.log({id});
+    
     try {
-      await GroupeAPI.delete(id);
+      await deleteGroupe(id);
       fetchGroupes();
     } catch (error) {
       console.error("Erreur suppression groupe", error);
     }
   };
 
-  /* ========== INIT ========== */
   useEffect(() => {
     fetchGroupes();
   }, []);
@@ -76,9 +81,8 @@ export const useGroupes = () => {
   return {
     groupes,
     loading,
-    fetchGroupes,
-    createGroupe,
-    updateGroupe,
-    deleteGroupe,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
   };
 };

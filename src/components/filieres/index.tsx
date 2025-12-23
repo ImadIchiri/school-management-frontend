@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import {FiliereAPI } from "../../services/axios";
+import {
+  getFilieres,
+  createFiliere,
+  updateFiliere,
+  deleteFiliere,
+} from "@/services/filieres";
 
 /* ================= TYPES ================= */
 export interface Filiere {
@@ -16,7 +21,7 @@ export const useFilieres = () => {
   const fetchFilieres = async () => {
     setLoading(true);
     try {
-      const res = await FiliereAPI.getAll();
+      const res = await getFilieres();
       setFilieres(res.data);
     } catch (error) {
       console.error("Erreur chargement filières", error);
@@ -25,35 +30,26 @@ export const useFilieres = () => {
     }
   };
 
-  const deleteFiliere = async (id: number) => {
-    if (!window.confirm("Supprimer cette filière ?")) return;
-    try {
-      await FiliereAPI.delete(id);
-      fetchFilieres();
-    } catch (error) {
-      console.error("Erreur suppression", error);
-    }
+  const handleCreate = async (data: {
+    nom: string;
+    description?: string;
+  }) => {
+    await createFiliere(data);
+    fetchFilieres();
   };
 
-  const createFiliere = async (filiere: { nom: string; description?: string }) => {
-    try {
-      await FiliereAPI.create(filiere);
-      fetchFilieres();
-    } catch (error) {
-      console.error("Erreur création", error);
-    }
-  };
-
-  const updateFiliere = async (
+  const handleUpdate = async (
     id: number,
-    filiere: { nom: string; description?: string }
+    data: { nom: string; description?: string }
   ) => {
-    try {
-      await FiliereAPI.update(id, filiere);
-      fetchFilieres();
-    } catch (error) {
-      console.error("Erreur mise à jour", error);
-    }
+    await updateFiliere(id, data);
+    fetchFilieres();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Supprimer cette filière ?")) return;
+    await deleteFiliere(id);
+    fetchFilieres();
   };
 
   useEffect(() => {
@@ -63,8 +59,8 @@ export const useFilieres = () => {
   return {
     filieres,
     loading,
-    deleteFiliere,
-    createFiliere,
-    updateFiliere,
+    handleCreate,
+    handleUpdate,
+    handleDelete,
   };
 };

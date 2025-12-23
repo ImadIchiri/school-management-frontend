@@ -1,206 +1,281 @@
 import { useState } from "react";
+import {
+  FiGrid,
+  FiList,
+  FiPlus,
+  FiEdit,
+  FiTrash,
+  FiEye,
+} from "react-icons/fi";
 import { useFilieres, type Filiere } from "@/components/filieres";
 import Modal from "@/components/filieres/Modal";
 
-import { FaEdit, FaEye, FaTrash, FaPlus } from "react-icons/fa";
-import { FiGrid, FiList } from "react-icons/fi";
+export default function FiliereDisplay () {
+  const { filieres, loading, handleCreate, handleUpdate, handleDelete } =
+    useFilieres();
 
-const FiliereDisplay = () => {
-  const {
-    filieres,
-    loading,
-    deleteFiliere,
-    createFiliere,
-    updateFiliere,
-  } = useFilieres();
+  const [isGrid, setIsGrid] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [editingFiliere, setEditingFiliere] = useState<Filiere | null>(null);
 
-  const [view, setView] = useState<"grid" | "list">("grid");
-  const [showCreate, setShowCreate] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [selectedFiliere, setSelectedFiliere] = useState<Filiere | null>(null);
 
-  const [createErrors, setCreateErrors] = useState<Record<string, string>>({});
-  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
-
-  const [currentFiliere, setCurrentFiliere] = useState<Filiere>({
+  const [form, setForm] = useState({ nom: "", description: "" });
+  const [editForm, setEditForm] = useState<Filiere>({
     id: 0,
     nom: "",
     description: "",
   });
 
-  const [newFiliere, setNewFiliere] = useState({
-    nom: "",
-    description: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [filiereToDelete, setFiliereToDelete] = useState<Filiere | null>(null);
 
-  const [selectedFiliere, setSelectedFiliere] = useState<Filiere | null>(null);
+  /* ================= ACTIONS ================= */
+  const openAdd = () => {
+    setEditingFiliere(null);
+    setForm({ nom: "", description: "" });
+    setErrors({});
+    setIsOpen(true);
+  };
 
-  /* ================= CREATE ================= */
-  const handleCreate = () => {
-    const errors: Record<string, string> = {};
+  const openEdit = (f: Filiere) => {
+    setEditingFiliere(f);
+    setEditForm({ ...f });
+    setErrors({});
+    setIsOpen(true);
+    setSheetOpen(false);
+  };
 
-    if (!newFiliere.nom.trim()) {
-      errors.nom = "Le nom est obligatoire";
-    }
+  const openSheet = (f: Filiere) => {
+    setSelectedFiliere(f);
+    setSheetOpen(true);
+  };
 
-    if (Object.keys(errors).length > 0) {
-      setCreateErrors(errors);
+  const saveFiliere = () => {
+    const errs: Record<string, string> = {};
+    const current = editingFiliere ? editForm : form;
+
+    if (!current.nom.trim()) errs.nom = "Nom obligatoire";
+
+    if (Object.keys(errs).length) {
+      setErrors(errs);
       return;
     }
 
-    createFiliere(newFiliere);
-    setNewFiliere({ nom: "", description: "" });
-    setCreateErrors({});
-    setShowCreate(false);
-  };
-
-  /* ================= EDIT ================= */
-  const handleEdit = () => {
-    const errors: Record<string, string> = {};
-
-    if (!currentFiliere.nom.trim()) {
-      errors.nom = "Le nom est obligatoire";
+    if (editingFiliere) {
+      handleUpdate(editingFiliere.id, current);
+    } else {
+      handleCreate(current);
     }
 
-    if (Object.keys(errors).length > 0) {
-      setEditErrors(errors);
-      return;
-    }
-
-    updateFiliere(currentFiliere.id, {
-      nom: currentFiliere.nom,
-      description: currentFiliere.description,
-    });
-
-    setEditErrors({});
-    setShowEdit(false);
+    setIsOpen(false);
   };
 
-  if (loading) {
+  const promptDelete = (f: Filiere) => {
+    setFiliereToDelete(f);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = () => {
+    if (!filiereToDelete) return;
+    handleDelete(filiereToDelete.id);
+    setShowDeleteConfirm(false);
+    if (selectedFiliere?.id === filiereToDelete.id) setSheetOpen(false);
+  };
+
+  if (loading)
     return (
-      <p className="text-center text-[#1D6F6B] font-medium mt-10">
+      <p className="text-center mt-10 text-[#1D6F6B] font-semibold">
         Chargement...
       </p>
     );
-  }
 
   return (
-    <div className="p-8 min-h-screen bg-[#DFF6F5] relative">
-      {/* HEADER */}
-      <div className="flex items-center justify-between mb-10">
-        <h1 className="flex-1 text-center text-4xl font-bold text-[#1D6F6B]">
-          Filières
-        </h1>
+    <div className="p-4 sm:p-8 min-h-screen bg-[#DFF6F5]">
+      {/* ================= HEADER ================= */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-8">
+        <h1 className="text-3xl font-bold text-[#1D6F6B]">Filières</h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex gap-3">
           <button
-            onClick={() => setView(view === "grid" ? "list" : "grid")}
-            className="w-10 h-10 flex items-center justify-center rounded-lg
-                       bg-[#7ED4D1] text-[#1D6F6B]"
+            onClick={() => setIsGrid(!isGrid)}
+            className="cursor-pointer w-10 h-10 rounded-lg bg-[#7ED4D1] flex items-center justify-center"
           >
-            {view === "grid" ? <FiList /> : <FiGrid />}
+            {isGrid ? <FiList /> : <FiGrid />}
           </button>
 
           <button
-            onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl
-                       bg-[#30B2AC] text-white font-semibold"
+            onClick={openAdd}
+            className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-[#30B2AC] text-white font-semibold"
           >
-            <FaPlus /> Créer
+            <FiPlus /> Ajouter
           </button>
         </div>
       </div>
 
-      {/* GRID */}
-      {view === "grid" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* ================= GRID ================= */}
+      {isGrid ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filieres.map((f) => (
-            <div key={f.id} className="bg-white rounded-2xl p-6 shadow">
-              <h2 className="text-xl font-bold text-[#1D6F6B]">{f.nom}</h2>
-              <p className="text-sm mb-4">{f.description || "—"}</p>
+            <div
+              key={f.id}
+              className="group relative bg-white rounded-2xl p-6 shadow"
+            >
+              <button
+                onClick={() => openSheet(f)}
+                className="cursor-pointer absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <FiEye className="transition-transform hover:scale-125" />
+              </button>
 
-              <div className="flex justify-end gap-3">
-                <button onClick={() => setSelectedFiliere(f)}>
-                  <FaEye />
+              <h2 className="text-xl font-bold text-[#1D6F6B]">{f.nom}</h2>
+              <p className="text-gray-600">{f.description || "—"}</p>
+
+              <div className="flex justify-end gap-3 mt-4">
+                <button
+                  onClick={() => openEdit(f)}
+                  className="cursor-pointer text-blue-600 transition-transform hover:scale-125"
+                >
+                  <FiEdit />
                 </button>
                 <button
-                  onClick={() => {
-                    setCurrentFiliere(f);
-                    setShowEdit(true);
-                  }}
+                  onClick={() => promptDelete(f)}
+                  className="cursor-pointer text-red-600 transition-transform hover:scale-125"
                 >
-                  <FaEdit />
-                </button>
-                <button onClick={() => deleteFiliere(f.id)}>
-                  <FaTrash className="text-red-500" />
+                  <FiTrash />
                 </button>
               </div>
             </div>
           ))}
         </div>
-      )}
-
-      {/* LIST */}
-      {view === "list" && (
-        <table className="w-full bg-white rounded-xl shadow overflow-hidden">
-          <thead className="bg-[#30B2AC] text-white">
-            <tr>
-              <th className="p-4 text-left">Nom</th>
-              <th className="p-4 text-left">Description</th>
-              <th className="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filieres.map((f) => (
-              <tr key={f.id} className="border-t">
-                <td className="p-4 font-semibold">{f.nom}</td>
-                <td className="p-4">{f.description || "—"}</td>
-                <td className="p-4 text-right">
-                  <button onClick={() => setSelectedFiliere(f)}>
-                    <FaEye />
-                  </button>
-                  <button
-                    className="mx-2"
-                    onClick={() => {
-                      setCurrentFiliere(f);
-                      setShowEdit(true);
-                    }}
-                  >
-                    <FaEdit />
-                  </button>
-                  <button onClick={() => deleteFiliere(f.id)}>
-                    <FaTrash className="text-red-500" />
-                  </button>
-                </td>
+      ) : (
+        /* ================= LIST ================= */
+        <div className="overflow-x-auto">
+          <table className="min-w-[700px] w-full bg-white rounded-xl shadow">
+            <thead className="bg-[#30B2AC] text-white">
+              <tr>
+                <th className="p-4 text-left">Nom</th>
+                <th className="p-4 text-left">Description</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filieres.map((f) => (
+                <tr key={f.id} className="border-t">
+                  <td className="p-4">{f.nom}</td>
+                  <td className="p-4">{f.description || "—"}</td>
+                  <td className="p-4 flex justify-end gap-3">
+                    <button
+                      onClick={() => openSheet(f)}
+                      className="cursor-pointer hover:scale-125 transition-transform"
+                    >
+                      <FiEye />
+                    </button>
+                    <button
+                      onClick={() => openEdit(f)}
+                      className="cursor-pointer text-blue-600 hover:scale-125 transition-transform"
+                    >
+                      <FiEdit />
+                    </button>
+                    <button
+                      onClick={() => promptDelete(f)}
+                      className="cursor-pointer text-red-600 hover:scale-125 transition-transform"
+                    >
+                      <FiTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      {/* MODALS */}
-      {showCreate && (
+      {/* ================= SHEET DETAILS ================= */}
+      {sheetOpen && selectedFiliere && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="flex-1 bg-black/40" onClick={() => setSheetOpen(false)} />
+          <div className="w-full sm:w-[380px] bg-white h-full p-6">
+            <h2 className="text-xl font-bold mb-4 text-[#1D6F6B]">
+              Détails filière
+            </h2>
+            <p><b>Nom :</b> {selectedFiliere.nom}</p>
+            <p><b>Description :</b> {selectedFiliere.description || "—"}</p>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <button
+                onClick={() => openEdit(selectedFiliere)}
+                className="cursor-pointer bg-[#30B2AC] text-white px-4 py-2 rounded-lg flex justify-center gap-2"
+              >
+                <FiEdit /> Modifier
+              </button>
+              <button
+                onClick={() => promptDelete(selectedFiliere)}
+                className="cursor-pointer bg-red-600 text-white px-4 py-2 rounded-lg flex justify-center gap-2"
+              >
+                <FiTrash /> Supprimer
+              </button>
+              <button
+                onClick={() => setSheetOpen(false)}
+                className="cursor-pointer bg-gray-200 px-4 py-2 rounded-lg"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODALS ================= */}
+      {!editingFiliere && isOpen && (
         <Modal
           title="Créer une filière"
-          filiere={newFiliere}
-          setFiliere={setNewFiliere}
-          onConfirm={handleCreate}
-          onClose={() => setShowCreate(false)}
-          errors={createErrors}
+          filiere={form}
+          setFiliere={setForm}
+          onConfirm={saveFiliere}
+          onClose={() => setIsOpen(false)}
+          errors={errors}
         />
       )}
 
-      {showEdit && (
+      {editingFiliere && isOpen && (
         <Modal
           title="Modifier la filière"
-          filiere={currentFiliere}
-          setFiliere={setCurrentFiliere}
-          onConfirm={handleEdit}
-          onClose={() => setShowEdit(false)}
-          errors={editErrors}
+          filiere={editForm}
+          setFiliere={setEditForm}
+          onConfirm={saveFiliere}
+          onClose={() => setIsOpen(false)}
+          errors={errors}
         />
+      )}
+
+      {/* ================= DELETE CONFIRM ================= */}
+      {showDeleteConfirm && filiereToDelete && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-sm">
+            <h3 className="font-bold text-lg mb-2">Confirmation</h3>
+            <p>Supprimer <b>{filiereToDelete.nom}</b> ?</p>
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="cursor-pointer bg-gray-200 px-4 py-2 rounded-lg"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="cursor-pointer bg-red-600 text-white px-4 py-2 rounded-lg"
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
-};
+}
 
-export default FiliereDisplay;
