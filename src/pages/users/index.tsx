@@ -9,14 +9,6 @@ import {
   FiEye,
 } from "react-icons/fi";
 
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { Label } from "@/components/ui/label";
-
 type User = {
   id: number;
   nom: string;
