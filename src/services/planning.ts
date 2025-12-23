@@ -7,11 +7,12 @@ type ExamenAttributesTypes = {
   employeId: number;
 };
 
-export const getPlannings = () => axiosInstance.get("/planning");
-export const getPlanningById = (planningId: number) =>
-  axiosInstance.get(`/planning/${planningId}`);
+export const getPlannings = () => axiosInstance.get("/plannings");
+export const getPlanningById = (id: number) =>
+  axiosInstance.get(`/plannings/${id}`);
 export const createPlanning = (planning: ExamenAttributesTypes) =>
-  axiosInstance.post("/planning", planning);
-export const updatePlanning = (planning: ExamenAttributesTypes) =>
-  axiosInstance.put("/planning", planning);
-export const deletePlanning = () => axiosInstance.delete("/planning");
+  axiosInstance.post("/plannings", planning);
+export const updatePlanning = (id: number,planning: ExamenAttributesTypes) =>
+  axiosInstance.put(`/plannings/${id}`, planning);
+export const deletePlanning = (id: number) => 
+  axiosInstance.delete(`/plannings/${id}`);
