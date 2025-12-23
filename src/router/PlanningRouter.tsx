@@ -2,7 +2,7 @@ import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import PlanningPage from "@/pages/planning";
 
-const PlanningRouter: RouteObject[] = [
+const planningRouter: RouteObject[] = [
     {
         path: "planning",
         element: <DashboardLayout />,
@@ -15,4 +15,4 @@ const PlanningRouter: RouteObject[] = [
     },
 ];
 
-export default PlanningRouter;
+export default planningRouter;

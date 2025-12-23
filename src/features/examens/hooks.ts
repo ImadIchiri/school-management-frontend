@@ -5,26 +5,24 @@ import {
   createExamen,
   updateExamen,
   deleteExamen,
-} from '@/api/examen.api';
+} from '@/services/examens';
 import type {
   Examen,
   CreateExamenDTO,
-  UpdateExamenDTO,
-  ExamenFilters,
 } from '@/features/examens/types';
 
 interface UseExamensReturn {
   examens: Examen[];
   loading: boolean;
   error: string | null;
-  fetchExamens: (filters?: ExamenFilters) => Promise<void>;
+  fetchExamens: () => Promise<void>;
 }
 
 interface UseExamenByIdReturn {
   examen: Examen | null;
   loading: boolean;
   error: string | null;
-  fetchExamen: (id: string) => Promise<void>;
+  fetchExamen: (id: number) => Promise<void>;
 }
 
 interface UseMutationReturn<T = Examen> {
@@ -42,12 +40,14 @@ export const useExamens = (): UseExamensReturn => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchExamens = useCallback(async (filters?: ExamenFilters) => {
+  const fetchExamens = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getExamens(filters);
-      setExamens(data);
+      const response = await getExamens();
+      console.log(response.data);
+      
+      setExamens(response.data);
     } catch (err: any) {
       setError(err.message || 'Erreur lors du chargement des examens');
     } finally {
@@ -62,18 +62,18 @@ export const useExamens = (): UseExamensReturn => {
  * Hook pour récupérer un examen par ID
  */
 export const useExamenById = (
-  initialId?: string
+  initialId?: number
 ): UseExamenByIdReturn => {
   const [examen, setExamen] = useState<Examen | null>(null);
   const [loading, setLoading] = useState(!!initialId);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchExamen = useCallback(async (id: string) => {
+  const fetchExamen = useCallback(async (id: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getExamenById(id);
-      setExamen(data);
+      const response = await getExamenById(id);
+      setExamen(response.data);
     } catch (err: any) {
       setError(err.message || 'Erreur lors du chargement de l\'examen');
     } finally {
@@ -101,8 +101,8 @@ export const useCreateExamen = (): UseMutationReturn => {
     setLoading(true);
     setError(null);
     try {
-      const result = await createExamen(dto);
-      setData(result);
+      const result = await createExamen(dto as any);
+      setData(result.data);
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la création de l\'examen');
       throw err;
@@ -123,12 +123,12 @@ export const useUpdateExamen = (): UseMutationReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const execute = useCallback(
-    async (id: string, dto: UpdateExamenDTO) => {
+    async (examen: Examen) => {
       setLoading(true);
       setError(null);
       try {
-        const result = await updateExamen(id, dto);
-        setData(result);
+        const result = await updateExamen(examen as any);
+        setData(result.data);
       } catch (err: any) {
         setError(err.message || 'Erreur lors de la mise à jour de l\'examen');
         throw err;
@@ -145,15 +145,15 @@ export const useUpdateExamen = (): UseMutationReturn => {
 /**
  * Hook pour supprimer un examen
  */
-export const useDeleteExamen = (): Omit<UseMutationReturn<void>, 'data'> & { execute: (id: string) => Promise<void> } => {
+export const useDeleteExamen = (): Omit<UseMutationReturn<void>, 'data'> & { execute: () => Promise<void> } => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const execute = useCallback(async (id: string) => {
+  const execute = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      await deleteExamen(id);
+      await deleteExamen();
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la suppression de l\'examen');
       throw err;

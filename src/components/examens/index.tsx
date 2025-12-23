@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Grid3x3, LayoutList } from 'lucide-react';
 import { useExamens, useDeleteExamen, useCreateExamen } from '@/features/examens/hooks';
-import type { ExamenFilters } from '@/features/examens/types';
 import { useToast } from '@/shared/components/Toast';
 import { Modal } from '@/shared/components/Modal';
 import { ExamCards } from './ExamCards';
@@ -22,8 +21,8 @@ export const Examens: React.FC = () => {
 		fetchExamens();
 	}, []);
 
-	const handleFiltersChange = (filters: ExamenFilters) => {
-		fetchExamens(filters);
+	const handleFiltersChange = () => {
+		fetchExamens();
 	};
 
 	const handleDelete = async (id: string) => {
