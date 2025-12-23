@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  Squares2X2Icon,
-  TableCellsIcon,
-  PlusIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+  FiGrid,
+  FiList,
+  FiPlus,
+  FiEdit,
+  FiTrash,
+  FiX,
+  FiEye,
+} from "react-icons/fi";
 
-// SHADCN SHEET
 import {
   Sheet,
   SheetContent,
@@ -26,48 +26,50 @@ type User = {
 };
 
 export default function UsersPage() {
-  const [isGrid, setIsGrid] = useState(false);
+  const [isGrid, setIsGrid] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-
-  // SHEET
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    open: boolean;
+    id: number | null;
+  }>({ open: false, id: null });
 
   const [users, setUsers] = useState<User[]>([
     {
       id: 1,
       nom: "Dupont",
       prenom: "Jean",
-      email: "jean.dupont@mail.com",
+      email: "jean@mail.com",
       role: { name: "Admin" },
     },
     {
       id: 2,
       nom: "Martin",
       prenom: "Sarah",
-      email: "sarah.martin@mail.com",
-      role: { name: "Employe" },
+      email: "sarah@mail.com",
+      role: { name: "Employé" },
     },
     {
       id: 3,
       nom: "Benali",
       prenom: "Youssef",
-      email: "youssef.benali@mail.com",
+      email: "youssef@mail.com",
       role: { name: "Enseignant" },
     },
     {
       id: 4,
       nom: "Nguyen",
       prenom: "Linh",
-      email: "linh.nguyen@mail.com",
-      role: { name: "Etudiant" },
+      email: "linh@mail.com",
+      role: { name: "Étudiant" },
     },
     {
       id: 5,
       nom: "Moreau",
       prenom: "Claire",
-      email: "claire.moreau@mail.com",
+      email: "claire@mail.com",
       role: { name: "Parent" },
     },
   ]);
@@ -76,19 +78,13 @@ export default function UsersPage() {
     nom: "",
     prenom: "",
     email: "",
-    roleName: "User",
+    roleName: "Utilisateur",
   });
 
-  useEffect(() => {
-    fetch("/api/users")
-      .then((res) => res.json())
-      .then(setUsers)
-      .catch(() => {});
-  }, []);
-
+  /* ---------- ACTIONS ---------- */
   const openAdd = () => {
     setEditingId(null);
-    setForm({ nom: "", prenom: "", email: "", roleName: "User" });
+    setForm({ nom: "", prenom: "", email: "", roleName: "Utilisateur" });
     setIsOpen(true);
   };
 
@@ -98,7 +94,7 @@ export default function UsersPage() {
       nom: user.nom,
       prenom: user.prenom,
       email: user.email,
-      roleName: user.role?.name || "User",
+      roleName: user.role?.name || "Utilisateur",
     });
     setIsOpen(true);
     setSheetOpen(false);
@@ -111,7 +107,6 @@ export default function UsersPage() {
 
   const saveUser = () => {
     if (!form.nom || !form.prenom || !form.email) return;
-
     if (editingId) {
       setUsers(
         users.map((u) =>
@@ -138,236 +133,265 @@ export default function UsersPage() {
         },
       ]);
     }
-
     setIsOpen(false);
   };
 
   const deleteUser = (id: number) => {
-    if (!confirm("Delete this user?")) return;
     setUsers(users.filter((u) => u.id !== id));
     setSheetOpen(false);
+    setConfirmDelete({ open: false, id: null });
   };
 
+  /* ---------- UI ---------- */
   return (
-    <>
-      <div className="min-h-screen bg-gray-100 py-6 px-4">
-        <div className="mx-auto max-w-7xl rounded-lg bg-white shadow">
-          {/* HEADER */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b p-4">
-            <h1 className="text-xl font-bold">Users</h1>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setIsGrid(!isGrid)}
-                className="flex items-center gap-2 rounded border px-3 py-2 text-sm"
-              >
-                {isGrid ? (
-                  <>
-                    <TableCellsIcon className="h-5 w-5" /> Table
-                  </>
-                ) : (
-                  <>
-                    <Squares2X2Icon className="h-5 w-5" /> Grid
-                  </>
-                )}
-              </button>
-              <button
-                onClick={openAdd}
-                className="flex items-center gap-2 rounded bg-school-primary px-4 py-2 text-sm text-white"
-              >
-                <PlusIcon className="h-5 w-5" />
-                Add User
-              </button>
-            </div>
-          </div>
-
-          {/* CONTENT */}
-          <div className="p-4">
-            {!isGrid ? (
-              <table className="min-w-full divide-y">
-                <tbody>
-                  {users.map((u) => (
-                    <tr
-                      key={u.id}
-                      onClick={() => openSheet(u)}
-                      className="cursor-pointer hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3">{u.nom}</td>
-                      <td className="px-4 py-3">{u.prenom}</td>
-                      <td className="px-4 py-3">{u.email}</td>
-                      <td className="px-4 py-3">{u.role?.name}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex justify-end gap-3">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEdit(u);
-                            }}
-                          >
-                            <PencilSquareIcon className="h-5 w-5 text-blue-600" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteUser(u.id);
-                            }}
-                          >
-                            <TrashIcon className="h-5 w-5 text-red-600" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {users.map((u) => (
-                  <div
-                    key={u.id}
-                    onClick={() => openSheet(u)}
-                    className="cursor-pointer rounded border p-4 shadow-sm hover:bg-gray-50"
-                  >
-                    <h3 className="font-semibold">
-                      {u.nom} {u.prenom}
-                    </h3>
-                    <p className="text-sm text-gray-600">{u.email}</p>
-
-                    <div className="mt-3 flex justify-between items-center">
-                      <span className="text-sm">{u.role?.name}</span>
-
-                      {/* BOUTONS IDENTIQUES AU TABLEAU */}
-                      <div className="flex gap-3">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEdit(u);
-                          }}
-                        >
-                          <PencilSquareIcon className="h-5 w-5 text-blue-600" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteUser(u.id);
-                          }}
-                        >
-                          <TrashIcon className="h-5 w-5 text-red-600" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+    <div className="p-4 sm:p-8 min-h-screen bg-[#DFF6F5]">
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-8">
+        <h1 className="text-3xl font-bold text-[#1D6F6B]">Utilisateurs</h1>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setIsGrid(!isGrid)}
+            className="cursor-pointer w-10 h-10 rounded-lg bg-[#7ED4D1] flex items-center justify-center"
+          >
+            {isGrid ? <FiList /> : <FiGrid />}
+          </button>
+          <button
+            onClick={openAdd}
+            className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-[#30B2AC] text-white font-semibold"
+          >
+            <FiPlus /> Ajouter
+          </button>
         </div>
       </div>
 
-      {/* SHEET */}
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right">
-          {selectedUser && (
-            <>
-              <SheetHeader>
-                <SheetTitle>Détails utilisateur</SheetTitle>
-              </SheetHeader>
+      {/* GRID */}
+      {isGrid ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {users.map((u) => (
+            <div
+              key={u.id}
+              className="group relative bg-white rounded-2xl p-6 shadow"
+            >
+              <button
+                onClick={() => openSheet(u)}
+                className="cursor-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 height=%2224%22 width=%2224%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22 stroke=%22black%22 stroke-width=%222%22 fill=%22none%22/></svg>'), pointer] absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <FiEye className="text-black transition-transform hover:scale-125" />
+              </button>
 
-              <div className="mt-6 space-y-4">
-                <div>
-                  <Label>Nom</Label>
-                  <p>{selectedUser.nom}</p>
-                </div>
-                <div>
-                  <Label>Prénom</Label>
-                  <p>{selectedUser.prenom}</p>
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <p>{selectedUser.email}</p>
-                </div>
-                <div>
-                  <Label>Role</Label>
-                  <p>{selectedUser.role?.name}</p>
-                </div>
-              </div>
-
-              {/* BOUTONS MÊMES COULEURS */}
-              <div className="mt-6 flex gap-4">
-                <button
-                  onClick={() => openEdit(selectedUser)}
-                  className="flex items-center gap-2"
-                >
-                  <PencilSquareIcon className="h-5 w-5 text-blue-600" />
-                  <span>Modifier</span>
-                </button>
-
-                <button
-                  onClick={() => deleteUser(selectedUser.id)}
-                  className="flex items-center gap-2"
-                >
-                  <TrashIcon className="h-5 w-5 text-red-600" />
-                  <span>Supprimer</span>
-                </button>
-              </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-
-      {/* MODAL (INCHANGÉ) */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded bg-white p-6">
-            <div className="flex justify-between">
-              <h2 className="text-lg font-semibold">
-                {editingId ? "Edit User" : "Add User"}
+              <h2 className="text-xl font-bold text-[#1D6F6B]">
+                {u.nom} {u.prenom}
               </h2>
-              <button onClick={() => setIsOpen(false)}>
-                <XMarkIcon className="h-5 w-5" />
+              <p className="text-gray-600 break-all">{u.email}</p>
+
+              <div className="flex justify-between items-center mt-4">
+                <span>{u.role?.name}</span>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => openEdit(u)}
+                    className="cursor-pointer"
+                  >
+                    <FiEdit className="text-blue-600 transition-transform hover:scale-125" />
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete({ open: true, id: u.id })}
+                    className="cursor-pointer"
+                  >
+                    <FiTrash className="text-red-600 transition-transform hover:scale-125" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-[700px] w-full bg-white rounded-xl shadow">
+            <thead className="bg-[#30B2AC] text-white">
+              <tr>
+                <th className="p-4 text-left">Nom</th>
+                <th className="p-4 text-left">Prénom</th>
+                <th className="p-4 text-left">Email</th>
+                <th className="p-4 text-center">Rôle</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.id} className="group border-t">
+                  <td className="p-4">{u.nom}</td>
+                  <td className="p-4">{u.prenom}</td>
+                  <td className="p-4 break-all">{u.email}</td>
+                  <td className="p-4 text-center font-medium">
+                    {u.role?.name}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => openSheet(u)}
+                        className="cursor-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 height=%2224%22 width=%2224%22><circle cx=%2212%22 cy=%2212%22 r=%2210%22 stroke=%22black%22 stroke-width=%222%22 fill=%22none%22/></svg>'), pointer] opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <FiEye className="text-black transition-transform hover:scale-125" />
+                      </button>
+                      <button
+                        onClick={() => openEdit(u)}
+                        className="cursor-pointer"
+                      >
+                        <FiEdit className="text-blue-600 transition-transform hover:scale-125" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setConfirmDelete({ open: true, id: u.id })
+                        }
+                        className="cursor-pointer"
+                      >
+                        <FiTrash className="text-red-600 transition-transform hover:scale-125" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* SHEET */}
+      {sheetOpen && selectedUser && (
+        <div className="fixed inset-0 z-50 flex">
+          <div
+            className="flex-1 bg-black/40"
+            onClick={() => setSheetOpen(false)}
+          />
+          <div className="w-full sm:w-[380px] bg-white h-full p-6 animate-slide-in">
+            <h2 className="text-xl font-bold mb-4 text-[#1D6F6B]">
+              Détails de l'utilisateur
+            </h2>
+            <p>
+              <b>Nom :</b> {selectedUser.nom}
+            </p>
+            <p>
+              <b>Prénom :</b> {selectedUser.prenom}
+            </p>
+            <p>
+              <b>Email :</b> {selectedUser.email}
+            </p>
+            <p>
+              <b>Rôle :</b> {selectedUser.role?.name}
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3">
+              <button
+                onClick={() => openEdit(selectedUser)}
+                className="cursor-pointer px-4 py-2 bg-[#30B2AC] text-white rounded-lg w-full flex justify-center gap-2 items-center"
+              >
+                <FiEdit /> Modifier
+              </button>
+              <button
+                onClick={() =>
+                  setConfirmDelete({ open: true, id: selectedUser.id })
+                }
+                className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg w-full flex justify-center gap-2 items-center"
+              >
+                <FiTrash /> Supprimer
+              </button>
+              <button
+                onClick={() => setSheetOpen(false)}
+                className="cursor-pointer px-4 py-2 bg-gray-200 rounded-lg w-full"
+              >
+                Fermer
               </button>
             </div>
+          </div>
+        </div>
+      )}
 
-            <div className="mt-4 space-y-4">
+      {/* CONFIRM DELETE MODAL */}
+      {confirmDelete.open && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-xl w-full max-w-sm">
+            <h2 className="font-bold text-xl mb-4 text-[#1D6F6B]">
+              Confirmer la suppression
+            </h2>
+            <p className="mb-6">
+              Voulez-vous vraiment supprimer cet utilisateur?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  if (confirmDelete.id !== null) deleteUser(confirmDelete.id);
+                }}
+                className="cursor-pointer w-full bg-red-600 text-white py-2 rounded-xl"
+              >
+                Supprimer
+              </button>
+              <button
+                onClick={() => setConfirmDelete({ open: false, id: null })}
+                className="cursor-pointer w-full bg-gray-200 py-2 rounded-xl"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL AJOUT/MODIFICATION */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded-xl w-full max-w-md">
+            <div className="flex justify-between mb-4">
+              <h2 className="font-bold">
+                {editingId ? "Modifier" : "Ajouter"}
+              </h2>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="cursor-pointer"
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="space-y-3">
               <input
-                className="w-full rounded border p-2"
+                className="w-full border p-2 rounded cursor-pointer"
                 placeholder="Nom"
                 value={form.nom}
                 onChange={(e) => setForm({ ...form, nom: e.target.value })}
               />
               <input
-                className="w-full rounded border p-2"
+                className="w-full border p-2 rounded cursor-pointer"
                 placeholder="Prénom"
                 value={form.prenom}
                 onChange={(e) => setForm({ ...form, prenom: e.target.value })}
               />
               <input
-                className="w-full rounded border p-2"
+                className="w-full border p-2 rounded cursor-pointer"
                 placeholder="Email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
               <select
-                className="w-full rounded border p-2"
+                className="w-full border p-2 rounded cursor-pointer"
                 value={form.roleName}
                 onChange={(e) => setForm({ ...form, roleName: e.target.value })}
               >
-                <option>User</option>
-                <option>Etudiant</option>
-                <option>Employe</option>
+                <option>Utilisateur</option>
+                <option>Étudiant</option>
+                <option>Employé</option>
                 <option>Enseignant</option>
                 <option>Parent</option>
                 <option>Admin</option>
               </select>
               <button
                 onClick={saveUser}
-                className="w-full rounded bg-school-primary py-2 text-white"
+                className="cursor-pointer w-full bg-[#30B2AC] text-white py-2 rounded-xl"
               >
-                Save
+                Enregistrer
               </button>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
