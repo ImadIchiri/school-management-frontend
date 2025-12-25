@@ -1,6 +1,10 @@
-import { getPermissions } from "@/services/permissions";
+import { createPermission, getPermissions } from "@/services/permissions";
 import { useEffect, useState } from "react";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import PermissionsListView from "@/components/rbac/permissions/ListView";
+import PermissionsGridView from "@/components/rbac/permissions/GridView";
+import CreatePermissionModal from "@/components/rbac/permissions/CreateModal";
+import UpdatePermissionModal from "@/components/rbac/permissions/UpdateModal";
 
 type PermissionType = {
   id: number;
@@ -21,9 +25,14 @@ const ITEMS_PER_PAGE = 10;
 
 const PermissionsPage = () => {
   const [permissions, setPermissions] = useState<PermissionType[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [view, setView] = useState<"list" | "grid">("list");
   const [page, setPage] = useState(1);
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedPermission, setSelectedPermission] =
+    useState<PermissionType | null>(null);
 
   // exp: IN: title: event_read - OUT: Read Event
   const handleFormatTitle = (title: string): string => {
@@ -36,7 +45,7 @@ const PermissionsPage = () => {
     return `${firstWord} ${secondWord}`;
   };
 
-  /* Pagination logic */
+  // Pagination logic
   const totalPages = Math.ceil(permissions.length / ITEMS_PER_PAGE);
   const paginatedPermissions = permissions.slice(
     (page - 1) * ITEMS_PER_PAGE,
@@ -44,9 +53,18 @@ const PermissionsPage = () => {
   );
 
   useEffect(() => {
+    if (page > totalPages) setPage(1);
+  }, [permissions]);
+
+  useEffect(() => {
+    // Function which handles the fetch
     const fetchPermissions = async () => {
-      const { data }: PermissionsResponseType = await getPermissions();
-      setPermissions(data.data);
+      try {
+        const { data } = await getPermissions();
+        setPermissions(data.data);
+      } catch (err) {
+        console.error(err);
+      }
     };
     fetchPermissions();
   }, []);
@@ -81,7 +99,7 @@ const PermissionsPage = () => {
 
           {/* Add */}
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowCreateModal(true)}
             className="bg-[#30B2AC] text-white px-5 py-2 rounded-lg hover:bg-[#1D6F6B]"
           >
             + Ajouter permission
@@ -91,90 +109,34 @@ const PermissionsPage = () => {
 
       {/* ===== LIST VIEW ===== */}
       {view === "list" && (
-        <div className="bg-white rounded-xl shadow border">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="px-4 py-3 text-left">Titre</th>
-                <th className="px-4 py-3 text-left">Description</th>
-                <th className="px-4 py-3 text-center">Statut</th>
-                <th className="px-4 py-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedPermissions.map((permission) => (
-                <tr
-                  key={permission.id}
-                  className={`border-t ${
-                    permission.isDeleted ? "bg-red-50" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <td className="px-4 py-3 font-medium">
-                    {handleFormatTitle(permission.name)}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {permission.description || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    {permission.isDeleted ? (
-                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs">
-                        Supprimée
-                      </span>
-                    ) : (
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
-                        Active
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-center space-x-2">
-                    <button className="">
-                      <PencilSquareIcon className="w-5 h-5 text-school-primaryDark" />
-                    </button>
-                    <button className="text-red-600 hover:underline">
-                      <TrashIcon className="w-5 h-5 text-red-600" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <PermissionsListView
+          permissions={paginatedPermissions}
+          handleFormatTitle={handleFormatTitle}
+          handleEdit={(permission) => {
+            setSelectedPermission(permission);
+            setShowEditModal(true);
+          }}
+          handleDelete={(permission) => {
+            setSelectedPermission(permission);
+            setShowDeleteModal(true);
+          }}
+        />
       )}
 
       {/* ===== GRID VIEW ===== */}
       {view === "grid" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {paginatedPermissions.map((permission) => (
-            <div
-              key={permission.id}
-              className={`border rounded-xl p-5 shadow ${
-                permission.isDeleted ? "bg-red-50 border-red-200" : "bg-white"
-              }`}
-            >
-              <div className="flex justify-between mb-2">
-                <h3 className="font-semibold">
-                  {handleFormatTitle(permission.name)}
-                </h3>
-                {permission.isDeleted ? (
-                  <span className="text-xs text-red-600">Supprimée</span>
-                ) : (
-                  <span className="text-xs text-green-600">Active</span>
-                )}
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                {permission.description || "—"}
-              </p>
-              <div className="flex justify-end gap-3">
-                <button className="text-blue-600 text-sm">
-                  <PencilSquareIcon className="w-5 h-5 text-school-primaryDark" />
-                </button>
-                <button className="text-red-600 text-sm">
-                  <TrashIcon className="w-5 h-5 text-red-600" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PermissionsGridView
+          permissions={paginatedPermissions}
+          handleFormatTitle={handleFormatTitle}
+          handleEdit={(permission) => {
+            setSelectedPermission(permission);
+            setShowEditModal(true);
+          }}
+          handleDelete={(permission) => {
+            setSelectedPermission(permission);
+            setShowDeleteModal(true);
+          }}
+        />
       )}
 
       {/* ===== Pagination ===== */}
@@ -195,55 +157,35 @@ const PermissionsPage = () => {
       </div>
 
       {/* ===== ADD MODAL ===== */}
-      {showModal && (
+      {showCreateModal && <CreatePermissionModal {...{ setShowCreateModal }} />}
+
+      {/* ===== UPDATE MODAL ===== */}
+      {showEditModal && selectedPermission && (
+        <UpdatePermissionModal {...{ selectedPermission, setShowEditModal }} />
+      )}
+
+      {/* ===== CONFIRM DELETE MODAL ===== */}
+      {showDeleteModal && selectedPermission && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-lg w-full max-w-3xl p-6 border border-[#7ED4D1] shadow-2xl mx-4">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-[#1D6F6B]">
-                Ajouter une permission
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-[#30B2AC] text-2xl font-bold"
-              >
-                ✕
-              </button>
-            </div>
+          <div className="bg-white rounded-lg w-full max-w-md p-6 shadow-2xl">
+            <h3 className="text-lg font-semibold text-red-600 mb-4">
+              Supprimer la permission
+            </h3>
 
-            {/* Form */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-[#1D6F6B]">
-                  Nom
-                </label>
-                <input
-                  type="text"
-                  className="w-full h-11 border border-[#7ED4D1] rounded-lg px-4 focus:ring-2 focus:ring-[#30B2AC]"
-                />
-              </div>
+            <p className="text-gray-700">
+              Êtes-vous sûr de vouloir supprimer{" "}
+              <strong>{selectedPermission.name}</strong> ?
+            </p>
 
-              <div>
-                <label className="block text-sm font-semibold text-[#1D6F6B]">
-                  Description
-                </label>
-                <textarea
-                  rows={4}
-                  className="w-full border border-[#7ED4D1] rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#30B2AC]"
-                />
-              </div>
-            </div>
-
-            {/* Buttons */}
             <div className="flex justify-end gap-4 mt-8">
               <button
-                onClick={() => setShowModal(false)}
-                className="border-2 border-[#7ED4D1] px-6 py-2 rounded-lg text-[#1D6F6B]"
+                onClick={() => setShowDeleteModal(false)}
+                className="px-6 py-2 border rounded-lg"
               >
                 Annuler
               </button>
-              <button className="bg-[#30B2AC] text-white px-6 py-2 rounded-lg hover:bg-[#1D6F6B]">
-                Ajouter
+              <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                Supprimer
               </button>
             </div>
           </div>
