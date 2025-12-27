@@ -1,6 +1,5 @@
-import { createPermission, getPermissions } from "@/services/permissions";
+import { getPermissions } from "@/services/permissions";
 import { useEffect, useState } from "react";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import PermissionsListView from "@/components/rbac/permissions/ListView";
 import PermissionsGridView from "@/components/rbac/permissions/GridView";
 import CreatePermissionModal from "@/components/rbac/permissions/CreateModal";
@@ -11,14 +10,6 @@ type PermissionType = {
   name: string;
   description: string | null;
   isDeleted: boolean;
-};
-
-type PermissionsResponseType = {
-  data: {
-    success: boolean;
-    data: PermissionType[];
-    length: number;
-  };
 };
 
 const ITEMS_PER_PAGE = 10;

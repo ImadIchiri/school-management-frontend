@@ -1,7 +1,8 @@
 import type { RouteObject } from "react-router";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import RolesPage from "@/pages/rbac/roles";
 import PermissionsPage from "@/pages/rbac/permissions";
+import DisplayRoles from "@/pages/rbac/roles/display";
+import AffectPermissionsToRole from "@/pages/rbac/roles/AffectPermissionsToRole";
 
 const rbacRoutes: RouteObject[] = [
   {
@@ -14,16 +15,11 @@ const rbacRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: <RolesPage />,
+            element: <DisplayRoles />,
           },
           {
-            path: ":id",
-            element: (
-              <h2>
-                Role By Id, this can have list of permissions added, and others
-                to select from
-              </h2>
-            ),
+            path: ":roleId/permissions",
+            element: <AffectPermissionsToRole />,
           },
         ],
       },
