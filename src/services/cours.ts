@@ -19,4 +19,5 @@ export const createCours = (cours:CreateCours)=>
   axiosInstance.post("/cours",cours);
 export const updateCours = (id:number,cours:CreateCours)=>
   axiosInstance.put(`/cours/${id}`,cours);
-export const deleteCours = ()=>axiosInstance.delete("/cours");
+export const deleteCours = (id:number)=>
+  axiosInstance.delete(`/cours/${id}`);

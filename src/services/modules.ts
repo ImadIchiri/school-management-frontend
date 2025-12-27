@@ -21,13 +21,13 @@ export const getModules = () =>
   axiosInstance.get("/modules");
 
 export const getModuleById = (id: number) =>
-  axiosInstance.get(`/module/${id}`);
+  axiosInstance.get(`/modules/${id}`);
 
 export const createModule = (module: CreateModule) =>
-  axiosInstance.post("/module", module);
+  axiosInstance.post("/modules", module);
 
 export const updateModule = (id: number, module: CreateModule) =>
-  axiosInstance.put(`/module/${id}`, module);
+  axiosInstance.put(`/modules/${id}`, module);
 
 export const deleteModule = (id: number) =>
-  axiosInstance.delete(`/module/${id}`);
+  axiosInstance.delete(`/modules/${id}`);
