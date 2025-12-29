@@ -2,16 +2,7 @@ import { useState, useEffect } from "react";
 import { FiGrid, FiList, FiEdit, FiTrash, FiEye } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { getRessources, createRessource, deleteRessource } from "@/services/ressources";
-
-type RessourceAttributesTypes = {
-  id?: number;
-  titre: string;
-  description: string;
-  url: File | string;
-  uploadedAt: string;
-  uploadedById: number;
-  typeId: number;
-};
+import type {RessourceAttributesTypes} from "@/services/ressources"
 
 export default function Ressource() {
   const [view, setView] = useState<"grid" | "list">("grid");

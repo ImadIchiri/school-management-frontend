@@ -2,24 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCoursById } from "@/services/cours";
 import { FiArrowLeft, FiCalendar, FiUser, FiMapPin, FiBookOpen, FiEdit3, FiClock } from 'react-icons/fi';
-
-/* ================= TYPES ================= */
-
-type ModuleType = {
-  id: number;
-  nom: string;
-};
-
-type CoursDetailsType = {
-  id: number;
-  titre: string;
-  description?: string | null;
-  dateDebut: string;
-  dateFin: string;
-  module?: ModuleType;
-};
-
-/* ================= COMPONENT ================= */
+import type {CoursDetailsType} from "@/services/cours"
 
 export default function CoursDetails() {
   const { id } = useParams<{ id: string }>();
@@ -35,7 +18,7 @@ export default function CoursDetails() {
         if (!id) return;
 
         const response = await getCoursById(Number(id));
-        console.log("Cours API :", response.data); // 🔍 utile pour debug
+        console.log("Cours API :", response.data); // utile pour debug
 
         setCours(response.data);
       } catch (error) {
@@ -66,7 +49,7 @@ export default function CoursDetails() {
     );
   }
 
-  /* ================= RENDER ================= */
+  /* ================= UI ================= */
   return (
   <div className="p-4 bg-[#DFF6F5] min-h-screen font-sans">
     <div className="max-w-4xl mx-auto">
@@ -96,7 +79,7 @@ export default function CoursDetails() {
 
         <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          {/* COLONNE GAUCHE : DESCRIPTION & INFOS */}
+          {/* COLONNE GAUCHE : DESCRIPTION */}
           <div className="md:col-span-2 space-y-6">
             <div>
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Description du cours</h3>
@@ -147,7 +130,7 @@ export default function CoursDetails() {
             </div>
           </div>
 
-          {/* COLONNE DROITE : STATUT & ACTIONS */}
+          {/* COLONNE DROITE : STATUT ACTIONS */}
           <div className="bg-gray-50 p-2 rounded-2xl border border-gray-100 flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Statut</h3>

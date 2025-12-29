@@ -45,6 +45,8 @@ export default function ModuleDetails() {
     );
   }
 
+  /* ================= UI ================= */
+
   return (
   <div className="p-4 bg-[#DFF6F5] min-h-screen font-sans">
     <div className="max-w-4xl mx-auto">
@@ -110,7 +112,7 @@ export default function ModuleDetails() {
             </div>
           </div>
 
-          {/* COLONNE DROITE : STATISTIQUES & ACTIONS */}
+          {/* COLONNE DROITE : STATISTIQUES  ACTIONS */}
           <div className="bg-gray-50 p-2 rounded-2xl border border-gray-100 flex flex-col justify-between">
             <div className="space-y-6">
               <div>

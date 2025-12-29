@@ -21,7 +21,6 @@ export default function ModuleUpdate() {
   });
 
   const [loading, setLoading] = useState(true);
-   /* ================= POPUP ================= */
   const [popup, setPopup] = useState<{
     message: string;
     type: "success" | "error";

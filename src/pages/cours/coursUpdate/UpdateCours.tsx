@@ -17,7 +17,7 @@ type UpdateCoursDto = {
 
 /* ================= COMPONENT ================= */
 
-function CoursUpdate() {
+export default function CoursUpdate() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -53,15 +53,17 @@ function CoursUpdate() {
   /* ================= LOAD DATA ================= */
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    
+    const fetchCours = async () => {
       try {
-        if (!id) return;
-
         const [coursRes, modulesRes] = await Promise.all([
           getCoursById(Number(id)),
           getModules(),
         ]);
-
         const c = coursRes.data;
 
         setForm({
@@ -83,7 +85,7 @@ function CoursUpdate() {
       }
     };
 
-    fetchData();
+    fetchCours();
   }, [id]);
 
   /* ================= UPDATE ================= */
@@ -91,7 +93,6 @@ function CoursUpdate() {
   const handleUpdate = async () => {
     try {
       if (!id) return;
-
       if (
         !form.titre ||
         !form.moduleId ||
@@ -273,5 +274,3 @@ function CoursUpdate() {
   </div>
 );
 }
-
-export default CoursUpdate;

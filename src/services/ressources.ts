@@ -4,8 +4,8 @@ export type RessourceAttributesTypes = {
   id?: number;
   titre: string;
   description: string;
-  url: string | File; // File pour l'upload
-  uploadedAt: Date | string; // string si utilisé dans FormData
+  url: File | string;
+  uploadedAt: string;
   uploadedById: number;
   typeId: number;
 };

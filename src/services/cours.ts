@@ -1,6 +1,6 @@
 import axiosInstance from "@/api";
 
-type CreateCours = {
+export type CreateCours = {
   titre: string;
   description?: string;
   dateDebut: string;
@@ -9,7 +9,29 @@ type CreateCours = {
   enseignantId?: number;
   salleId?: number;
 };
+export type CoursAttributesTypes = {
+  id: number;
+  titre: string;
+  description?: string;
+  dateDebut: string;
+  dateFin: string;
+  moduleId: number;
+  enseignantId?: number;
+  salleId?: number;
+};
+export type CoursDetailsType = {
+  id: number;
+  titre: string;
+  description?: string | null;
+  dateDebut: string;
+  dateFin: string;
+  module?: ModuleType;
+};
 
+export type ModuleType = {
+  id: number;
+  nom: string;
+};
 
 export const getCours=()=>
   axiosInstance.get("/cours");

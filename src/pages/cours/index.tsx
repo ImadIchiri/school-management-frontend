@@ -3,36 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FiGrid, FiList, FiEdit, FiTrash, FiEye } from "react-icons/fi";
 import { getCours, createCours, deleteCours } from "@/services/cours";
 import { getModules } from "@/services/modules";
-
-/* ================= TYPES ================= */
-
-type CoursAttributesTypes = {
-  id: number;
-  titre: string;
-  description?: string;
-  dateDebut: string;
-  dateFin: string;
-  moduleId: number;
-  enseignantId?: number;
-  salleId?: number;
-};
-
-type CreateCours = {
-  titre: string;
-  description?: string;
-  dateDebut: string;
-  dateFin: string;
-  moduleId: number;
-  enseignantId?: number;
-  salleId?: number;
-};
-
-type ModuleType = {
-  id: number;
-  nom: string;
-};
-
-/* ================= COMPONENT ================= */
+import type {CreateCours, CoursAttributesTypes, ModuleType} from "@/services/cours"
 
 export default function Cours() {
   const navigate = useNavigate();
@@ -41,7 +12,6 @@ export default function Cours() {
   const [showModal, setShowModal] = useState(false);
   const [cours, setCours] = useState<CoursAttributesTypes[]>([]);
   const [modules, setModules] = useState<ModuleType[]>([]);
-
   const [newCours, setNewCours] = useState<CreateCours>({
     titre: "",
     description: "",
@@ -110,21 +80,9 @@ export default function Cours() {
     }
 
     try {
-      const payload = {
-        titre: newCours.titre,
-        description: newCours.description,
-        dateDebut: newCours.dateDebut,
-        dateFin: newCours.dateFin,
-        moduleId: newCours.moduleId,
-        ...(newCours.enseignantId && { enseignantId: newCours.enseignantId }),
-        ...(newCours.salleId && { salleId: newCours.salleId }),
-      };
-
-      const res = await createCours(payload);
-
+      const res = await createCours(newCours);
       setCours((prev) => [...prev, res.data]);
       setShowModal(false);
-
       setNewCours({
         titre: "",
         description: "",
@@ -134,7 +92,6 @@ export default function Cours() {
         enseignantId: undefined,
         salleId: undefined,
       });
-
       showPopup("Cours ajouté avec succès");
     } catch (error) {
       console.error("Erreur création cours :", error);
@@ -330,6 +287,7 @@ export default function Cours() {
             <option value="3">NADIR Hamza</option>
             <option value="4">BOUKOUCH Hassan</option>
           </select>
+          
         </div>
 
         {/* Salle */}

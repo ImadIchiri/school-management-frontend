@@ -3,13 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { FiGrid, FiList, FiEdit, FiTrash, FiEye } from "react-icons/fi";
 import { getModules, createModule, deleteModule } from "@/services/modules";
 import type { ModuleType, CreateModule } from "@/services/modules";
+import { getNiveaux } from "@/services/niveau";
 
+ type Niveau= {
+  id: number;
+  anneeLabel: string;
+  dateDebut: string;
+  dateFin: string;
+  filiereId: number;
+}
 export default function Module() {
   const navigate = useNavigate();
 
   const [view, setView] = useState<"grid" | "list">("grid");
   const [showModal, setShowModal] = useState(false);
   const [modules, setModules] = useState<ModuleType[]>([]);
+  const [niveaux, setNiveaux] = useState<Niveau[]>([]);
   const [newModule, setNewModule] = useState<CreateModule>({
     nom: "",
     description: "",
@@ -41,7 +50,7 @@ export default function Module() {
 };
 
 
-  /* ===== GET ALL MODULES ===== */
+  /* ===== FETCH MODULES ===== */
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -54,7 +63,19 @@ export default function Module() {
     };
     fetchModules();
   }, []);
-
+/* ===== FETCH Niveaux ===== */
+  useEffect(() => {
+    const fetchNiveaux = async () => {
+      try {
+        const res = await getNiveaux();
+        setNiveaux(Array.isArray(res.data) ? res.data : []);
+      } catch (error) {
+        console.error("Erreur récupération niveaux :", error);
+        showPopup("Erreur lors du chargement des niveaux");
+      }
+    };
+    fetchNiveaux();
+  }, []);
   /* ===== CREATE MODULE ===== */
   const handleCreateModule = async () => {
     if (!newModule.nom || !newModule.niveauId) {
@@ -238,7 +259,10 @@ export default function Module() {
                   className="border border-[#7ED4D1] rounded-lg px-4 h-11 bg-white focus:ring-2 focus:ring-[#30B2AC] outline-none transition-all"
                 >
                   <option value={0}>Choisir le niveau</option>
-                  <option value={2}>Niveau 1</option>
+                  {niveaux.map((n)=> (
+                    <option key={n.id} value={n.id}>{n.id}</option>
+                  ))}
+                  
                 </select>
               </div>
 
